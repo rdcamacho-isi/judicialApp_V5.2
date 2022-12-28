@@ -2,6 +2,7 @@ echo ***********Creando proyecto, ISI Tecnology***********
 set /p "projectPath=Ingrese el path o ruta donde se creara el proyecto: "
 echo %projectPath%/src
 copy package.json %projectPath%
+copy app.yaml %projectPath%
 copy webpack.config.js %projectPath%
 copy webpack.prod.js %projectPath%
 xcopy src %projectPath%\src /E/H/C/I
