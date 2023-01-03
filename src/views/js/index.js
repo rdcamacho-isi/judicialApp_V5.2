@@ -1,9 +1,14 @@
-// Index for front-end template
-window.onload = ()=>{
-    document.getElementById("btn").addEventListener("click",()=>{
-        $.post('/',{name:"soy isi technology"},(data)=>{
-            console.log(data)
-            alert(`recibí desde el backend: ${data}`)
-        })
-    })
+import * as utilidades from "./utilidades.js";
+
+window.onload = () => {
+
+    if (sessionStorage.getItem("sesion") === null) {
+        utilidades.loadingStart();
+        window.location.href = "./login";
+        utilidades.loadingEnd();
+    } else {
+        utilidades.loadingStart();
+        window.location.href = "./test";
+        utilidades.loadingEnd();
+    }
 }

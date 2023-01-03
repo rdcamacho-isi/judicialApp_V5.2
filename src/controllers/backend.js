@@ -1,7 +1,5 @@
-function sayHi(name){
-    return `hola ${name}`
-}
+import * as loginFunc from "./login.js";
 
-export default{
-    sayHi
+export{
+    loginFunc
 }

@@ -8,7 +8,7 @@ module.exports = {
 
     entry: {
         index: ['./src/views/js/index.js'],
-        // newEntry: ['./src/views/js/entryName.js'],
+        // newEntry: ['./src/views/js/login/jquery.min.js'],
     },
        output: {
         clean: true,

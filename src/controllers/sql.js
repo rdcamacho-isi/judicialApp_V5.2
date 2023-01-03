@@ -18,10 +18,10 @@ import { createPool } from "mysql";
 const bdConnection = (queryType, SQLstatement) => {
     // Objeto de conexion a la BD
     let poolBdConnection = createPool({
-        host: "",
-        database: "",
-        user: "",
-        password: "",
+        host: "93.188.166.162",
+        database: "veleztru_gestion_documental",        
+        user: "veleztru_admin",
+        password: "R)EqIR&Oe@Ew",
     });
 
     return new Promise((resolve, reject) => {
