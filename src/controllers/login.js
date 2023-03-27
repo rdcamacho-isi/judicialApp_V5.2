@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import * as sql from "./sql.js";
 import * as utilidadesIsi from "./utilidades.js";
- 
+
 
 const closeLogin = async (sesion, trigger) => {
   //busca sesiones abiertas de este usuario

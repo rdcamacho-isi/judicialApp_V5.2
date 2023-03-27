@@ -1,7 +1,7 @@
 import * as utilidades from "./utilidades.js";
  
 (()=>{
-
+ 
     'use strict'
 
     window.onload = () => {
