@@ -4,7 +4,7 @@ import {dirname,  join} from 'path'
 import {fileURLToPath} from 'url'
 
 import * as backend from './controllers/backend.js';
-
+ 
 const router = Router();
 
 const parser = bodyParser.json();
@@ -22,8 +22,8 @@ router.get('/login',(req,res)=>{
     res.sendFile(join(__dirname, '/views/templates/login.html'))
 })
 
-router.get('/test',(req,res)=>{
-    res.sendFile(join(__dirname, '/views/templates/test.html'))
+router.get('/home',(req,res)=>{
+    res.sendFile(join(__dirname, '/views/templates/home.html'))
 })
 
 //POST HTTP METHODS
