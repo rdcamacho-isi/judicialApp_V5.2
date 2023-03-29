@@ -39,6 +39,14 @@ $ npm run build:dev
 ```
 $ npm run build    
 ```
+
+## 🔨 OCR-Module pdfTron
+🚩To use the pdfTron API ocrReader function, you must download the lib folder that contains the OCR module and add it to the maker-core controllers folder at the following link https://drive.google.com/drive/folders/168zuBBPLv9n5pCGT8CM0kKYSofprcB4P ?usp=share_link or at https://dev.apryse.com/es?platform=windows&product=nodejs-64&_gl=1*12vvwth*_ga*MTUwODAzMjc1Mi4xNjc2NDAyNDcx*_ga_S9LESQW29R*MTY3OTk1MDk4My44LjEuMTY3OTk1MD4wLOC41.
+
+* Para utilizar la funcion ocrReader de la API de pdfTron se debe descargar la carpeta lib que contiene el modulo OCR y agregarla a la carpeta controllers del maker-core en el siguiente enlace https://drive.google.com/drive/folders/168zuBBPLv9n5pCGT8CM0kKYSofprcB4P?usp=share_link o en https://dev.apryse.com/es?platform=windows&product=nodejs-64&_gl=1*12vvwth*_ga*MTUwODAzMjc1Mi4xNjc2NDAyNDcx*_ga_S9LESQW29R*MTY3OTk1MDk4My44LjEuMTY3OTk1MDk4OC41NS4wLjA.
+
+
+
 ## 💻🛑 Start WebPack Server
 * _Iniciar servidor WebPack_
 ***
@@ -90,3 +98,8 @@ _Siga las instrucciones mostradas en la consola._
 #
 * 🛑Para efectos del despliegue es importante que el servidor escuche las conexiones en el puerto 8080.
 * For deployment purposes it is important that the server listens for connections on port 8080
+
+## 🆕 Deploy on Server Azure
+* Despliegue en servidor de Azure
+### To deploy an application built in Node.js in a virtual machine with Windows OS, go to the following tutorial https://drive.google.com/file/d/1gk0mzNwZt20WumTaBicsGWrf6aAcxtoF/view?usp=share_link.
+* Para realizar el despliegue de una aplicacion construida en Node.js en una maquina virtual con Windows OS dirijase al siguiente tutorial https://drive.google.com/file/d/1gk0mzNwZt20WumTaBicsGWrf6aAcxtoF/view?usp=share_link.

@@ -1,13 +1,14 @@
 console.clear();
 import { createPool } from "mysql";
+import { delay } from "./utilidades.js";
 
 // Funcion generica para establecer conexion a la BD
 /**
  * @param {string} queryType - queryType: se debe indicar su es un "select", "update" o "insert"
  * @param {string} SQLstatement - SQLstatement: debe incluir una sentencia SQL valida
- *  
+ *
  * @descripción Establecer conexion a la BD
- * 
+ *
  * @Resultados
  * - resultAsObj: Devuelve una matriz con objetos por cada fila [0]
  * - resultAsTwoDimesionalArr: Devuelve las filas en una matriz bidimensional
@@ -15,139 +16,222 @@ import { createPool } from "mysql";
  * - colNames: Devuelve los nombres de las columnas
  */
 
-const bdConnection = (queryType, SQLstatement) => {
-    // Objeto de conexion a la BD
-    let poolBdConnection = createPool({
-        host: "93.188.166.162",
-        database: "veleztru_gestion_documental",        
-        user: "veleztru_admin",
-        password: "R)EqIR&Oe@Ew",
-    });
+async function bdConnection(queryType, SQLstatement) {
+  const connection = (queryType, SQLstatement) => {
 
     return new Promise((resolve, reject) => {
-        // const sql = `SELECT * FROM tblUrlSitios`;
-        const sql = SQLstatement;
-        const testBd = poolBdConnection.query(
-            sql,
-            async (error, results, fields) => {
-                console.log("***********************************************");
-                if (error) throw error;
-                if (['select', 'update', 'insert'].indexOf(queryType) == -1) throw "Debe definir que tipo de consulta: 'select', 'update', 'insert'";
+      // Objeto de conexion a la BD
+      let poolBdConnection = createPool({
+        host: "rubendb.mysql.database.azure.com",
+        user: "rubenbd",
+        password: "nYsqCfeLR67aCLD",
+        database: "soyisipa_vigilanciajudicial",
+        // host: "15.235.65.10",
+        // user: "soyisipa_usuarioVJ",
+        // password: "K@EjcObp7+~.",
+        // database: "soyisipa_vigilanciaJudicial",
+      });
+      // const sql = `SELECT * FROM tblUrlSitios`;
+      const sql = SQLstatement;
 
-                //Se obtienen los nombres de las columnas de la base de datos
-                let colNamesArr = [];
-                let colNamesObj = {};
-                let resultAsTwoDimesionalArr = [];
-                if (queryType == "select") {
-                    fields.forEach(field => {
-                        colNamesArr.push(field.name);
-                        colNamesObj[field.name] = [];
-                    });
+      const testBd = poolBdConnection.query(
+        sql,
+        async (error, results, fields) => {
+          if (error) {
 
-                    //El resultado como matriz bidimensional y crea objeto cuya llava es el nombre de la columna y valor es una matriz con los resulatados de la consulta
+            reject(error);
+            poolBdConnection.end();
+          } else {
+            console.log("BD exitosa");
+            if (
+              ["select", "update", "insert", "delete"].indexOf(queryType) == -1
+            )
+              throw "Debe definir que tipo de consulta: 'select', 'update', 'insert','delete'";
 
-                    results.forEach(obj => {
-                        let row = [];
-                        Object.keys(obj).forEach(key => {
-                            row.push(obj[key]);
-                            colNamesObj[key].push(obj[key])
-                        });
-                        resultAsTwoDimesionalArr.push(row);
-                    });
-                }
+            //Se obtienen los nombres de las columnas de la base de datos
+            let colNamesArr = [];
+            let colNamesObj = {};
+            let resultAsTwoDimesionalArr = [];
+            if (queryType == "select") {
+              fields.forEach((field) => {
+                colNamesArr.push(field.name);
+                colNamesObj[field.name] = [];
+              });
 
-                resolve({
-                    resultAsObj: results,
-                    resultAsTwoDimesionalArr,
-                    resultAsArrPerCol: colNamesObj,
-                    colNames: colNamesArr
+              //El resultado como matriz bidimensional y crea objeto cuya llava es el nombre de la columna y valor es una matriz con los resulatados de la consulta
+
+              results.forEach((obj) => {
+                let row = [];
+                Object.keys(obj).forEach((key) => {
+                  row.push(obj[key]);
+                  colNamesObj[key].push(obj[key]);
                 });
-                poolBdConnection.end();
-                // console.log('The solution is: ', results);
+                resultAsTwoDimesionalArr.push(row);
+              });
             }
-        );
-    });
-};
 
-// Funcion para la insercion masiva de datos a la BD
-const bdConectionMasiveSqlInsert = (arrOfData, sqlStatementNoValues, maxValuesForSql) => {
-    var arrWithSqlFormat = [];
-    if (arrOfData[0].length == 1) {
-        arrOfData.forEach((r) => {
-            var row = [];
-            r.forEach((c, index) => {
-                row.push("('" + c + "')");
+            resolve({
+              resultAsObj: results,
+              resultAsTwoDimesionalArr,
+              resultAsArrPerCol: colNamesObj,
+              colNames: colNamesArr,
             });
-            arrWithSqlFormat.push(row);
-        });
-    } else {
-        arrOfData.forEach((r) => {
-            var row = [];
-            r.forEach((c, index) => {
-                if (index == 0) {
-                    row.push("('" + c + "'");
-                } else if (index == arrOfData[0].length - 1) {
-                    row.push("'" + c + "')");
-                } else {
-                    row.push("'" + c + "'");
-                }
-            });
-            arrWithSqlFormat.push(row);
-        });
-    }
-
-    var arraysNeeded = Math.ceil(arrWithSqlFormat.length / maxValuesForSql);
-    var grupos = [];
-
-    for (var i = 1; i <= arraysNeeded; i++) {
-        grupos.push([]);
-        var maxRow = maxValuesForSql * i;
-        arrWithSqlFormat.forEach(function (r, index) {
-            if (index >= maxRow - maxValuesForSql && index < maxRow) {
-                grupos[i - 1].push(r);
-            }
-        });
-    }
-
-    const test = [];
-
-    grupos.forEach(async (grupo, index) => {
-        var valuesToQuery = grupo.join();
-        var SQLstatement = sqlStatementNoValues.replace("{rows}", valuesToQuery);
-        const queryResult = await bdConnection("insert", SQLstatement);
-        console.log(queryResult);
+            poolBdConnection.end();
+            // console.log('The solution is: ', results);
+          }
+        }
+      );
     });
-
-    // return test
+  };
+  let err = false;
+  let intentos = 0
+  let message = ''
+  return new Promise(async (resolve, reject) => {
+    do {
+    err = false;
+    try {
+      const resp = await connection(queryType, SQLstatement);
+      resolve(resp)
+    } catch (error) {
+      message = error.message 
+      console.log(error.message);
+      err = true;
+      await delay(10000)
+    }
+    intentos++
+    } while (err && intentos <= 5 && message.includes('TIMEDOUT') );
+    if(intentos == 5){
+      reject(message)
+    }
+  });
 }
 
-// const testBdConnectionm = async () => {
-//     const casa = await bdConnection("insert", `SELECT * FROM Tbl_Usuario`);
+// Funcion para la insercion masiva de datos a la BD,
+// El parametro opcion se activa si es necesario dejar algun campo en NULL en BD
+const bdConectionMasiveSqlInsert = async (
+  arrOfData,
+  sqlStatementNoValues,
+  maxValuesForSql,
+  opcion = false
+) => {
+  var arrWithSqlFormat = [];
+  if (arrOfData[0].length == 1) {
+    arrOfData.forEach((r) => {
+      var row = [];
+      r.forEach((c, index) => {
+        row.push("('" + c + "')");
+      });
+      arrWithSqlFormat.push(row);
+    });
+  } else {
+    arrOfData.forEach((r, indexData) => {
+      var row = [];
+      r.forEach((c, index) => {
+        if (index == 0) {
+          row.push("('" + c + "'");
+        } else if (index == arrOfData[indexData].length - 1) {
+          row.push("'" + c + "')");
+        } else {
+          row.push("'" + c + "'");
+        }
+      });
+      arrWithSqlFormat.push(row);
+    });
+  }
 
-//     console.log(casa);
+  const test = [];
+  if (opcion) {
+    const statement = sqlStatementNoValues;
+    const a = statement.split(",");
 
-// }
+    let subGroupMenorSql = [];
+    let subGroupSql = [];
 
-// testBdConnectionm();
+    //   Divide en dos el array
+    for (let i = 0; i < arrWithSqlFormat.length; i++) {
+      if (arrWithSqlFormat[i].length == a.length) {
+        subGroupSql.push(arrWithSqlFormat[i]);
+      } else {
+        subGroupMenorSql.push(arrWithSqlFormat[i]);
+      }
+    }
 
+    var arraysNeeded1 = Math.ceil(subGroupMenorSql.length / maxValuesForSql);
+    var arraysNeeded2 = Math.ceil(subGroupSql.length / maxValuesForSql);
 
-// const testMasveUpdate = async () => {
+    var grupos = [];
+    var subGroupMenor = [];
 
-//     const arrOfData  = [["test",6],["test",6565],["test",7878]];
-//     const sqlStatementNoValues = `INSERT INTO Tbl_Usuario(Username, Id_Sucursal)
-//                                     VALUES {rows}`;
-//     const maxValuesForSql = 3;                                
+    for (var i = 1; i <= arraysNeeded2; i++) {
+      grupos.push([]);
+      var maxRow = maxValuesForSql * i;
+      subGroupSql.forEach(function (r, index) {
+        if (index >= maxRow - maxValuesForSql && index < maxRow) {
+          grupos[i - 1].push(r);
+        }
+      });
+    }
+    for (var i = 1; i <= arraysNeeded1; i++) {
+      subGroupMenor.push([]);
+      var maxRow = maxValuesForSql * i;
+      subGroupMenorSql.forEach(function (r, index) {
+        if (index >= maxRow - maxValuesForSql && index < maxRow) {
+          subGroupMenor[i - 1].push(r);
+        }
+      });
+    }
 
-//     const casa = bdConectionMasiveSqlInsert (arrOfData,sqlStatementNoValues,maxValuesForSql)
+    const bdPromise1 = grupos.map(async (grupo, index) => {
+      var valuesToQuery = grupo.join();
+      var SQLstatement = sqlStatementNoValues.replace("{rows}", valuesToQuery);
 
-//     console.log(casa);
+      const queryResult = await bdConnection("insert", SQLstatement);
+      // console.log(queryResult);
+    });
+    await Promise.allSettled(bdPromise1);
+    console.log(
+      "------------------------Espera la BD---------------------------------"
+    );
 
-// }
+    const bdPromise2 = subGroupMenor.map(async (grupo, index) => {
+      const statement = sqlStatementNoValues;
+      const a = statement.split(",");
+      a.splice(4, 1);
+      const b = a.join(",").toString().replace(/\n/g, "");
+      var valuesToQuery = grupo.join();
+      var SQLstatement = b.replace("{rows}", valuesToQuery);
+      const queryResult = await bdConnection("insert", SQLstatement);
+      return queryResult;
+    });
 
-// testMasveUpdate();
+    await Promise.allSettled(bdPromise2);
+  } else {
+    var grupos = [];
+    var arraysNeeded = Math.ceil(arrWithSqlFormat.length / maxValuesForSql);
+    for (var i = 1; i <= arraysNeeded; i++) {
+      grupos.push([]);
+      var maxRow = maxValuesForSql * i;
+      arrWithSqlFormat.forEach(function (r, index) {
+        if (index >= maxRow - maxValuesForSql && index < maxRow) {
+          grupos[i - 1].push(r);
+        }
+      });
+    }
+    let result = [];
+    for (const grupo of grupos) {
+      var valuesToQuery = grupo.join();
+      var SQLstatement = sqlStatementNoValues.replace("{rows}", valuesToQuery);
+      const queryResult = await bdConnection("insert", SQLstatement);
+      // console.log({resultx: queryResult})
+      result.push(queryResult);
+    }
+    return result;
+  }
 
-
-export {
-    bdConnection,
-    bdConectionMasiveSqlInsert
+  // return test
 };
+
+
+
+
+export { bdConnection, bdConectionMasiveSqlInsert };
