@@ -12,7 +12,7 @@ import * as utilidades from "./utilidades.js";
             utilidades.loadingEnd();
         } else {
             utilidades.loadingStart();
-            window.location.href = "./home";
+            window.location.href = "./home"; 
             utilidades.loadingEnd();
         }
     }

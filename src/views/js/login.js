@@ -93,7 +93,7 @@ import * as utilidades from "./utilidades.js";
     if (e.target.matches("#btn-login")) {
       tryLogin();
     }
-  }
+  } 
   
   setInterval(() => { closeLogin("time"); }, 1000);
   
