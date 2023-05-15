@@ -17,7 +17,7 @@ import { delay } from "./utilidades.js";
  */
 
 async function bdConnection(queryType, SQLstatement) {
-
+//
   const connection = (queryType, SQLstatement) => {
     return new Promise((resolve, reject) => {
       // Objeto de conexion a la BD
