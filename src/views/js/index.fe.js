@@ -15,7 +15,7 @@ import * as utilidades from "./utilidades.je.js";
             utilidades.loadingEnd();
         } else {
             utilidades.loadingStart();
-            window.location.href = "./loadExcelReport"; 
+            window.location.href = "./home"; 
             sessionStorage.clear();        
            sessionStorage.setItem('loginInUse', true);
             utilidades.loadingEnd();
