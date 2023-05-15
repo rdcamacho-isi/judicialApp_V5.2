@@ -40,11 +40,6 @@ router.get('/login', (req, res) => {
 })
 
 
-router.get('/loadExcelReport', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/loadExcelReport.html'))
-})
-
-
 router.get('/home', (req, res) => {
   res.sendFile(join(__dirname, '/views/templates/home.html'))
 })
@@ -53,13 +48,6 @@ router.get('/createAgent', (req, res) => {
   res.sendFile(join(__dirname, '/views/templates/createAgent.html'))
 })
 
-router.get('/agentList', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/agentList.html'))
-})
-
-router.get('/generateInvoices', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/generateInvoices.html'))
-})
 
 
 //POST HTTP METHODS
@@ -230,140 +218,6 @@ router.post('/getDataForEditClienteViewForm', bodyParser.json(), async (req, res
 });
 
 
-//Guardar datos excel descarfado del software de ASA en base de datos
-
-const upload = multer({ storage: multer.memoryStorage() });
-
-
-router.post('/getArrTblReports', bodyParser.json(), async (req, res) => {
-  // console.log({ paramsFromFrontEnd: req.body.data });
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = req.body.data;
-
-  console.log({ dataReq });
-
-
-  const report = await sql.bdConnection('select', `SELECT 
-      DATE(datos_aza.fecha_inicio_reporte_aza) AS start_date,
-      DATE(datos_aza.fecha_fin_reporte_aza) AS end_date,
-      COUNT(datos_aza.id_reporte) AS total_rows_stored,
-      datos_aza.usuario AS user,
-      datos_aza.fecha_registro AS storage_date
-    FROM
-      datos_aza
-    WHERE MONTH(datos_aza.fecha_inicio_reporte_aza) = "${dataReq.month}"
-    GROUP BY datos_aza.id_reporte`);
-
-  // console.log({dataReq})
-  // const result = await backend.loginFunc.login(dataReq.user, dataReq.password);
-  // console.log({result});
-  res.send(report.resultAsObj);
-});
-
-router.post("/saveDataExcelFile", upload.single("file"), async (req, res) => {
-  // console.log({ paramsFromFrontEnd: req.body.data });
-  const response = await backend.loadReportBtf.storeReportInBd({
-    startDate: req.body["start-date"],
-    endDate: req.body["end-date"],
-    user: req.body["user"],
-    fileBuffer: req.file.buffer
-  });
-
-
-  console.log(`response to front end: ${response}`);
-
-  res.send(response);
-
-});
-
-//Funcion para validar si titulos de la tabla de excel son iguales y estan en el mismo orden que las columnas de la BD
-
-router.post('/getAgentList', bodyParser.json(), async (req, res) => {
-  // console.log({ paramsFromFrontEnd: req.body.data });
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = req.body.data;
-
-
-
-  const report = await sql.bdConnection('select', `SELECT
-      (CASE
-        WHEN tbl_a_personas.tipoPersona = 'Agent' 
-          THEN
-            CONCAT(tbl_a_personas.nombre," ",tbl_a_personas.apellido)
-                ELSE
-                tbl_a_personas.nombre
-        END) AS name,
-        tbl_a_personas.tipoPersona AS typeOfCollaborator,
-        tbl_a_personas.numeroIdentificacion AS idAzaBettingSoftware,
-        tbl_a_personas.Usuario AS user,
-        tbl_a_personas.FechaRegistro AS storageDate,
-        tbl_a_personas.idPersonas
-    FROM
-        tbl_a_personas
-    WHERE tbl_a_personas.Estado = "A"`);
-
-  // console.log({dataReq})
-  // const result = await backend.loginFunc.login(dataReq.user, dataReq.password);
-  // console.log({result});
-  res.send(report.resultAsObj);
-});
-
-
-
-
-router.post('/loadTblToGenerateInvoices', bodyParser.json(), async (req, res) => {
-  console.log({ postEnEjecucion: 'loadTblToGenerateInvoices' })
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = req.body.data;
-
-  const responseData = {
-    otherData: await backend.generateInvoces.getDataToSendInvoices()
-  }
-
-  res.send(responseData);
-});
-
-router.post('/authorizeSendingInvoices', bodyParser.json(), async (req, res) => {
-  console.log({ postEnEjecucion: 'authorizeSendingInvoices' })
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = req.body.data;
-
-  console.log({ dataReq });
-
-  const updateAutorizaciones = await sql.bdConnection('update', `UPDATE datos_aza
-    SET
-      datos_aza.invoiceSend = "approvedToSend",
-      datos_aza.userApprovedSendInvoice = "${dataReq.user}"
-    WHERE datos_aza.id_datos_aza IN (${dataReq.authorizations.join(",")})`);
-
-    const responseData = {
-      changedRows: updateAutorizaciones.resultAsObj.changedRows
-    }
-
-  res.send(responseData);
-});
-
-// changedRows
 
 async function axiosTest(url, data) {
   try {
