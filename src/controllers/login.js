@@ -3,6 +3,8 @@ import * as sql from "./sql.js";
 import * as utilidadesIsi from "./utilidades.js";
 
 
+
+
 const closeLogin = async (sesion, trigger) => {
   //busca sesiones abiertas de este usuario
   let r3 = await sql.bdConnection("select", `SELECT
@@ -75,7 +77,7 @@ const loginAndCloseOtherSesions = async (user, password) => {
     const codSesion = utilidadesIsi.generateId() + "_" + todayNum;
     //genera codigo sesion
     await sql.bdConnection("insert", `INSERT INTO Tbl_0_Sesiones (sesion, user, Usuario) 
-                            VALUES ('${codSesion}', '${user}', '${user}');`);
+                            VALUES ("${codSesion}", "${user}", "${user}");`);
     return codSesion
   }
 }
@@ -116,7 +118,7 @@ const login = async (user, password) => {
       const codSesion = utilidadesIsi.generateId() + "_" + todayNum;
       //genera codigo sesion
       const r3 = await sql.bdConnection("insert", `INSERT INTO Tbl_0_Sesiones (sesion, user, Usuario) 
-                  VALUES ('${codSesion}', '${user}', '${user}');`);  
+                  VALUES ("${codSesion}", "${user}", "${user}");`);  
       return codSesion
     } else {
       return "otros"
@@ -135,7 +137,7 @@ const changePassword = async (newPassData) => {
               password 
             from 
               Tbl_0_Users 
-            WHERE user = '${obj.user}' AND password = '${passwordMD5}'`);
+            WHERE user = '${obj.user}' AND password = "${passwordMD5}"`);
 
  
   if (res.resultAsArrPerCol.password.length > 0) {
@@ -144,8 +146,8 @@ const changePassword = async (newPassData) => {
     res = await sql.bdConnection("update", `UPDATE 
                             Tbl_0_Users 
                           SET 
-                            password = '${newPasswordHash}' 
-                          WHERE user = '${obj.user}'`);                  
+                            password = "${newPasswordHash}" 
+                          WHERE user = "${obj.user}"`);                  
 
     if (res.resultAsObj.changedRows > 0) {
       console.log('succes');

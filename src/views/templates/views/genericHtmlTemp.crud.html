@@ -1,0 +1,105 @@
+<div>
+    <div id="form-generic" class="valGHF">
+  
+      <div id="box-BotonToModal"></div>
+  
+      <div id="datosEspecificos"></div>
+  
+      <div id="box-botonesFomNoModal"></div>    
+  
+      <template id="temp-BotonToModal">
+        <button type="button" class="btn btn-outline-dark mb-5" style="display: block; width: 100%;"></button> 
+      </template>   
+  
+      <template id="temp-botonesFomNoModal">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="btn-cancelarForm">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="btn-guardarForm">Guardar</button>
+        </div>
+      </template>    
+  
+      <template id="tituloH4-temp">
+        <h4 class="mt-5 tituloH4Ghf" style="color:grey;" id="tituloH4"></h4>
+      </template>
+  
+      <template id="hr-temp">
+        <hr class="mt-5 hrGhf" style="height:2px;border-width:0;color:gray;background-color:gray">
+      </template>
+  
+      <!-- Dinamic inputs GHF-->
+  
+      <div class="d-none" id="templatePlayGround">
+        <div></div>
+      </div>
+  
+      <template id="datosEspecificos-input-temp">
+        <div class="form-row mt-3">
+          <strong class="mt-5"><label></label></strong>
+          <input class="form-control dinamicInputGhf">
+          <datalist>
+          </datalist>
+  
+        </div>
+      </template>
+  
+      <template id="datosEspecificos-select-temp">
+        <div class="form-row mt-3">
+          <strong class="mt-5"><label></label></strong>
+          <select class="form-control dinamicSelectGhf">
+  
+              </select>
+        </div>
+      </template>
+  
+      <template id="datosEspecificos-checkBox-temp">
+        <div class="form-check">
+          <!-- ES IMPORTANTE los radio tiene que tener
+          - id en el input
+          - for igual al id del input en el label-->
+          <input class="form-check-input dinamicCheckBoxGhf" type="checkbox" >
+          <label class="form-check-label" >
+            </label>
+        </div>
+      </template>
+  
+      <template id="datosEspecificos-radio-temp">
+        <!-- ES IMPORTANTE los radio tiene que tener
+          - id en el input
+          - name en el input
+          - for igual al id del input en el label-->
+        <div class="form-check">
+          <input class="form-check-input dinamicRadioGhf" type="radio" >
+          <label class="form-check-label" >
+            </label>
+        </div>
+      </template>
+  
+      <template id="datosEspecificos-summernote-temp">
+        <div class="mt-5">
+          <strong><label></label></strong>
+          <div class="dinamicSummernoteGhf dinamicTagGhf"> </div>
+        </div>
+      </template>
+  
+      <template id="datosEspecificos-textArea-temp">
+        <div class="form-row mt-3">
+          <strong class="mt-5"><label></label></strong>
+          <textarea class="form-control dinamicTextAreaGhf" rows="3"></textarea>
+        </div>
+      </template>
+      <template id="datosEspecificos-label-temp">
+        <div class="form-row mt-3">
+          <strong class="mt-5"><label></label></strong>
+        </div>
+      </template>
+      <template id="datosEspecificos-div-temp">
+        <!--<div style="padding-left: 2.5%;padding-right: 2.5%;">-->
+        <div>
+          <div class="dinamicDivGhf">
+          </div>
+        </div>
+      </template>
+      <!-- Dinamic inputs GHF-->
+  
+    </div>
+  </div>

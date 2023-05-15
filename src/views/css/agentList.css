@@ -1,0 +1,24 @@
+  
+  .custom-table th,
+  .custom-table td {
+    white-space: pre-wrap; /* Enables wrapping for table cell content */
+    word-break: break-word; /* Breaks words for better wrapping */
+    vertical-align: middle;
+    font-size: 0.8rem;    
+  }
+  
+  .custom-button {
+    font-size: 0.8rem; /* Adjust the font size */
+    padding: 0.25rem 0.5rem; /* Adjust the padding for the button size */
+    white-space: nowrap; /* Prevent the button text from wrapping */
+  }
+  
+  
+  
+
+  .button-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  

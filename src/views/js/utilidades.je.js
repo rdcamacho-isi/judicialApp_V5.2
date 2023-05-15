@@ -13,15 +13,56 @@
  */
 
 const backEndRequest = async (options) => {
-    const params = typeof options.params == "undefined" ? undefined : options.params;
+    const params = typeof options.params == "undefined" ? {} : options.params;
     return new Promise((resolve, reject) => {
-        $.post(options.url, params, (data) => {
-            resolve(data);
-        }).fail((err) => {
-            reject(err);
+      $.ajax({
+        url: `/${options.url}`,
+        method: 'POST',
+        data: JSON.stringify({ data: params }),
+        contentType: 'application/json',
+        success: (data) => {
+          resolve(data);
+        },
+        error: (err) => {
+          reject(err);
+        },
+      });
+    });
+  };
+
+const backEndRequestForFiles = async (options) => {
+    const params = typeof options.params == "undefined" ? {} : options.params;
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: `/${options.url}`,
+            method: 'POST',
+            data: options.body, // directly send the FormData object
+            processData: false, // add this line to prevent jQuery from processing the data
+            contentType: false, // add this line to set the correct content type automatically
+            success: (data) => {
+                resolve(data);
+            },
+            error: (err) => {
+                reject(err);
+            },
         });
-    })
-}
+    });
+};
+
+// const backEndRequest = async (options) => {
+//     const params = typeof options.data == "undefined" ? undefined : options.data;
+//     return new Promise((resolve, reject) => {
+//         // console.log({optionsurl: `/${options.url}`})
+//         // console.log({params: params})
+//         $.post(`/loadClienteView `, {data: {
+//             loginInUse: sessionStorage.loginInUse
+//         }}, (data) => {
+//             resolve(data);
+//         }).fail((err) => {
+//             reject(err);
+//         });
+//     })
+// }
 
 const activarSelectMetroUi = (cssSelector) => {
     return new Promise(resolve => {
@@ -195,6 +236,34 @@ const loadingEnd = () => {
     document.getElementById("loading").classList.add("invisible");
 }
 
+function cleanDataSet(modalId) {
+    const botonesModal = $(`#${modalId} .modal-footer button`);
+    botonesModal.each(index => {
+        Object.keys(botonesModal[index].dataset).forEach(key => {
+            if (botonesModal[index].dataset[key] != "dismiss") {
+                delete botonesModal[index].dataset[key];
+            }
+        });
+        botonesModal[index].id = "";
+    })
+}
+
+function formatDateAndTime(isoTimestamp) {
+    const dateTime = new Date(isoTimestamp);
+    const year = dateTime.getFullYear();
+    const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+    const day = String(dateTime.getDate()).padStart(2, '0');
+    const hours = String(dateTime.getHours()).padStart(2, '0');
+    const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+    const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+function delay(delayInMilliseconds) {
+    return new Promise(resolve => setTimeout(resolve, delayInMilliseconds));
+}
+
 export {
     backEndRequest,
     activarSelectMetroUi,
@@ -204,5 +273,9 @@ export {
     addUniqueOptionToDropdownList,
     loadTemplateV2,
     loadingStart,
-    loadingEnd
+    loadingEnd,
+    cleanDataSet,
+    backEndRequestForFiles,
+    formatDateAndTime,
+    delay
 }

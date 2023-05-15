@@ -7,3 +7,15 @@
     height: 100vh;
     background-color: rgba(255, 255, 255, 0.9)
   }
+
+  .custom-footer {
+    height: 50px; /* Adjust this value according to your desired height */
+  }
+    
+
+  .custom-logo {
+    width: 60px; /* Adjust the width to your preference */
+    height: 60px; /* Adjust the height to your preference */
+    object-fit:scale-down;
+  }
+  

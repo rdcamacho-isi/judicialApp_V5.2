@@ -1,20 +1,27 @@
-import * as utilidades from "./utilidades.js";
- 
-(()=>{
-  'use strict'
+import * as utilidades from "./utilidades.je.js";
+
+'use strict'
  
   const tryLogin = async () => {
+    console.log('cososo');
     utilidades.loadingStart();
     var user = document.getElementById("userLoginView").value;
     var password = document.getElementById("password").value;
   
+console.log({
+  user,
+  password
+});
+
     const result = await utilidades.backEndRequest({
-      url: "/tryLogin",
+      url: "tryLogin",
       params: {
         user,
         password
       }
     });
+
+    console.log({resultFE: result});
 
     if (result === "no") {
       swal("Alerta!", "Usuario o clave incorrecta!", "error");
@@ -35,7 +42,7 @@ import * as utilidades from "./utilidades.js";
         });
     } else {
   
-      window.location.href = "./home";
+      window.location.href = ".loadExcelReport";
       sessionStorage.setItem("user", user);
       sessionStorage.setItem("sesion", result);
       utilidades.loadingEnd();    
@@ -52,7 +59,7 @@ import * as utilidades from "./utilidades.js";
     var password = document.getElementById("password").value;
   
     const result = await utilidades.backEndRequest({
-      url: "/login",
+      url: "login",
       params: {
         user,
         password
@@ -64,7 +71,7 @@ import * as utilidades from "./utilidades.js";
     } else {
       sessionStorage.setItem("user", user);
       sessionStorage.setItem("sesion", result);
-      window.location.href = "./home";
+      window.location.href = "./loadExcelReport";
       utilidades.loadingEnd();
     }
   }
@@ -74,7 +81,7 @@ import * as utilidades from "./utilidades.js";
     if (document.getElementById("userLoginView") === null) {
       const sesion = sessionStorage.getItem("sesion");
       const result = await utilidades.backEndRequest({
-        url: "/closeLogin",
+        url: "closeLogin",
         params: {
           sesion,
           trigger
@@ -95,7 +102,7 @@ import * as utilidades from "./utilidades.js";
     }
   } 
   
-  setInterval(() => { closeLogin("time"); }, 1000);
+  setInterval(() => { closeLogin("time"); }, 100000000);
   
   window.onload = (e) => {
     const localPath = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + window.location.pathname;
@@ -106,7 +113,6 @@ import * as utilidades from "./utilidades.js";
     }
   }
 
-})()
 
 export default{
     

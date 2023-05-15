@@ -17,19 +17,15 @@ import { delay } from "./utilidades.js";
  */
 
 async function bdConnection(queryType, SQLstatement) {
-  const connection = (queryType, SQLstatement) => {
 
+  const connection = (queryType, SQLstatement) => {
     return new Promise((resolve, reject) => {
       // Objeto de conexion a la BD
       let poolBdConnection = createPool({
         host: "rubendb.mysql.database.azure.com",
         user: "rubenbd",
-        password: "nYsqCfeLR67aCLD",
-        database: "soyisipa_vigilanciajudicial",
-        // host: "15.235.65.10",
-        // user: "soyisipa_usuarioVJ",
-        // password: "K@EjcObp7+~.",
-        // database: "soyisipa_vigilanciaJudicial",
+        password: "SMgybA5Mqhuxtpk",
+        database: "btf",
       });
       // const sql = `SELECT * FROM tblUrlSitios`;
       const sql = SQLstatement;
@@ -42,7 +38,7 @@ async function bdConnection(queryType, SQLstatement) {
             reject(error);
             poolBdConnection.end();
           } else {
-            console.log("BD exitosa");
+            // console.log("BD exitosa");
             if (
               ["select", "update", "insert", "delete"].indexOf(queryType) == -1
             )
@@ -88,19 +84,19 @@ async function bdConnection(queryType, SQLstatement) {
   let message = ''
   return new Promise(async (resolve, reject) => {
     do {
-    err = false;
-    try {
-      const resp = await connection(queryType, SQLstatement);
-      resolve(resp)
-    } catch (error) {
-      message = error.message 
-      console.log(error.message);
-      err = true;
-      await delay(10000)
-    }
-    intentos++
-    } while (err && intentos <= 5 && message.includes('TIMEDOUT') );
-    if(intentos == 5){
+      err = false;
+      try {
+        const resp = await connection(queryType, SQLstatement);
+        resolve(resp)
+      } catch (error) {
+        message = error.message
+        console.log(error.message);
+        err = true;
+        await delay(10000)
+      }
+      intentos++
+    } while (err && intentos <= 5 && message.includes('TIMEDOUT'));
+    if (intentos == 5) {
       reject(message)
     }
   });
@@ -114,6 +110,9 @@ const bdConectionMasiveSqlInsert = async (
   maxValuesForSql,
   opcion = false
 ) => {
+
+  arrOfData = escapeSingleQuotesInArray(arrOfData);
+
   var arrWithSqlFormat = [];
   if (arrOfData[0].length == 1) {
     arrOfData.forEach((r) => {
@@ -231,30 +230,37 @@ const bdConectionMasiveSqlInsert = async (
   // return test
 };
 
+function escapeSingleQuotesInArray(array) {
+  return array.map(subarray =>
+    subarray.map(item =>
+      typeof item === 'string' ? item.replace(/'/g, "\\'") : item
+    )
+  );
+}
 
 const escapeSqlString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-      switch (char) {
-        case "\0":
-          return "\\0";
-        case "\x08":
-          return "\\b";
-        case "\x09":
-          return "\\t";
-        case "\x1a":
-          return "\\z";
-        case "\n":
-          return "\\n";
-        case "\r":
-          return "\\r";
-        case "\"":
-        case "'":
-        case "\\":
-        case "%":
-          return "\\" + char; // Escape single quote, double quote, backslash and percent sign
-      }
-    });
-  }
+  return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    switch (char) {
+      case "\0":
+        return "\\0";
+      case "\x08":
+        return "\\b";
+      case "\x09":
+        return "\\t";
+      case "\x1a":
+        return "\\z";
+      case "\n":
+        return "\\n";
+      case "\r":
+        return "\\r";
+      case "\"":
+      case "'":
+      case "\\":
+      case "%":
+        return "\\" + char; // Escape single quote, double quote, backslash and percent sign
+    }
+  });
+}
 
 
 export { bdConnection, bdConectionMasiveSqlInsert, escapeSqlString };

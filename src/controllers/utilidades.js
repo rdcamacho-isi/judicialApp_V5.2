@@ -398,6 +398,65 @@ async function getNameDocs(folderPath) {
     })
 }
 
+async function validarTipoUsuario(sesion) {
+    const tipoUsuario = await sql.bdConnection('select', `SELECT
+            Tbl_0_Users.tipoUsuario
+        FROM
+            Tbl_0_Sesiones
+        LEFT JOIN Tbl_0_Users ON Tbl_0_Users.user = Tbl_0_Sesiones.user
+        WHERE
+            Tbl_0_Sesiones.sesion = "${sesion}"`);
+
+    return tipoUsuario.resultAsObj[0].tipoUsuario;
+}
+
+function fixJson(obj) {
+
+    obj = obj
+      .replace(/"{"/g, '{°')
+      .replace(/"}"/g, '°}')
+      .replace(/\["/g, '[°')
+      .replace(/"]/g, '°]')
+      .replace(/}"/g, '}')
+  
+    obj = obj
+      .replace(/(\r\n|\n|\r)/g, " ")
+      .replace(/\s+/g, " ")
+      .replace(/{"/g, "{°")
+      .replace(/"}/g, "°}")
+      .replace(/":"/g, "°¡°")
+      .replace(/","/g, "°,°")
+      .replace(/":/g, "°°")
+      .replace(/,"/g, ",°");
+  
+    obj = obj
+      .replace(/"/g, '!')
+      .replace(/:/g, '')
+      .replace(/;/g, '')
+      .replace(/\\/g, '');
+  
+    obj = obj
+      .replace(/{°/g, '{"')
+      .replace(/°}/g, '"}')
+      .replace(/°}/g, '"}')
+      .replace(/!/g, "'")
+      .replace(/\[°/g, '["')
+      .replace(/°]/g, '"]')
+      .replace(/°¡°/g, '":"')
+      .replace(/°,°/g, '","')
+      .replace(/°°/g, '":')
+      .replace(/¡/g, ':')
+      .replace(/,°/g, ',"');
+  
+  
+    obj = obj
+      .replace(/°,/g, ',"');
+  
+    return obj
+  }
+
+
+
 export {
     renameFile,
     getFileName,
@@ -413,5 +472,7 @@ export {
     delay,
     utf8ToAnsi,
     pdfSpliter,
-    getNameDocs
+    getNameDocs,
+    validarTipoUsuario,
+    fixJson
 }
