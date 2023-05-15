@@ -22,10 +22,10 @@ async function bdConnection(queryType, SQLstatement) {
     return new Promise((resolve, reject) => {
       // Objeto de conexion a la BD
       let poolBdConnection = createPool({
-        host: "51.222.241.167",
-        user: "ghftecno_users",
-        password: "QpQA?yc[;h)(",
-        database: "ghftecno_judicialApp",
+        host: "",
+        user: "",
+        password: "",
+        database: "",
       });
       // const sql = `SELECT * FROM tblUrlSitios`;
       const sql = SQLstatement;
