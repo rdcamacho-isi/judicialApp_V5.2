@@ -48,6 +48,10 @@ router.get('/createAgent', (req, res) => {
   res.sendFile(join(__dirname, '/views/templates/createAgent.html'))
 })
 
+router.get('/crearCaso', (req, res) => {
+  res.sendFile(join(__dirname, '/views/templates/crearCaso.html'))
+})
+
 
 
 //POST HTTP METHODS

@@ -2,9 +2,6 @@ import crypto from "crypto";
 import * as sql from "./sql.js";
 import * as utilidadesIsi from "./utilidades.js";
 
-
-
-
 const closeLogin = async (sesion, trigger) => {
   //busca sesiones abiertas de este usuario
   let r3 = await sql.bdConnection("select", `SELECT
@@ -26,7 +23,7 @@ const closeLogin = async (sesion, trigger) => {
               Tbl_0_Sesiones.sesion = "${sesion}"`);
     return "1";
     //cerrar sesion en base de datos
-  }else{
+  } else {
     return "0"
   }
 }
@@ -86,8 +83,8 @@ const login = async (user, password) => {
 
   //encripta clave
   const md5 = crypto.createHash("md5");
-  const passwordMD5 = md5.update(password).digest('base64');  
-  
+  const passwordMD5 = md5.update(password).digest('base64');
+
   //encripta clave
   //busca clave y usuario en base de datos
   const r = await sql.bdConnection("select", `SELECT
@@ -109,7 +106,7 @@ const login = async (user, password) => {
                 FROM
                   Tbl_0_Sesiones
                 WHERE
-                Tbl_0_Sesiones.Estado = "A" AND Tbl_0_Sesiones.user = "${user}"`); 
+                Tbl_0_Sesiones.Estado = "A" AND Tbl_0_Sesiones.user = "${user}"`);
     //busca sesiones abiertas de este usuario
     if (typeof r3.resultAsArrPerCol.sesion[0] == "undefined") {
       //genera codigo sesion
@@ -118,7 +115,7 @@ const login = async (user, password) => {
       const codSesion = utilidadesIsi.generateId() + "_" + todayNum;
       //genera codigo sesion
       const r3 = await sql.bdConnection("insert", `INSERT INTO Tbl_0_Sesiones (sesion, user, Usuario) 
-                  VALUES ("${codSesion}", "${user}", "${user}");`);  
+                  VALUES ("${codSesion}", "${user}", "${user}");`);
       return codSesion
     } else {
       return "otros"
@@ -139,15 +136,15 @@ const changePassword = async (newPassData) => {
               Tbl_0_Users 
             WHERE user = '${obj.user}' AND password = "${passwordMD5}"`);
 
- 
+
   if (res.resultAsArrPerCol.password.length > 0) {
     const newPasswordHash = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, obj.newPassword));
-    
+
     res = await sql.bdConnection("update", `UPDATE 
                             Tbl_0_Users 
                           SET 
                             password = "${newPasswordHash}" 
-                          WHERE user = "${obj.user}"`);                  
+                          WHERE user = "${obj.user}"`);
 
     if (res.resultAsObj.changedRows > 0) {
       console.log('succes');
@@ -163,7 +160,7 @@ const changePassword = async (newPassData) => {
   }
 }
 
-export{
+export {
   closeLogin,
   loginAndCloseOtherSesions,
   login,

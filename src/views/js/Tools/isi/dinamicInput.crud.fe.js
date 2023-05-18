@@ -460,10 +460,10 @@ const numericTempGenerator = async (e, onInput) => {
                         $(`#${field.id}`).summernote('code', "")
                     }
 
-                    if(field.tagName.toLowerCase() === 'select'){
+                    if (field.tagName.toLowerCase() === 'select') {
                         field.options[0].selected = 'selected'
                     }
-                    
+
                 }
 
                 // for(const elSelect of destination.querySelectorAll(".dinamicSelectGhf")){
@@ -627,7 +627,7 @@ const loadFormGhf = async (e) => {
         }
     })
 
-    console.log({obj});
+    console.log({ obj });
 
     ///APLICA SI FORMULARIO VA EN UN MODAL
     if (e.target.modal == true) {
@@ -690,9 +690,9 @@ const loadFormGhf = async (e) => {
         if (objEazyDropDown.isInTemp) {
             arrForEazyDropDown = obj.otherData[objEazyDropDown.arrOtherDataKey];
         } else {
-            console.log({test1: obj.otherData[objEazyDropDown.arrOtherDataKey]});
+            console.log({ test1: obj.otherData[objEazyDropDown.arrOtherDataKey] });
 
-            console.log({idsArr: objEazyDropDown.idsArr});
+            console.log({ idsArr: objEazyDropDown.idsArr });
 
 
             new dropdown(obj.otherData[objEazyDropDown.arrOtherDataKey]).eazyDropDownByIds(objEazyDropDown.idsArr);
