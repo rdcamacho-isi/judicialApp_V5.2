@@ -17,5 +17,5 @@ app.use(routers)
 
 console.log(__dirname)
 
-app.listen(8080)
+app.listen(8000)
 console.log("Servidor iniciado")

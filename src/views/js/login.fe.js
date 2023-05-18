@@ -1,5 +1,5 @@
 import * as utilidades from "./utilidades.je.js";
-import './crearCaso.fe.js'
+import './Caso.fe.js'
 
 'use strict'
 
