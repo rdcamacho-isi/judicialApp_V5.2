@@ -1,7 +1,7 @@
 import * as utilidades from "./utilidades.js";
 import * as crearCliente from "./crearCliente.js";
-import { getCasoViewForm_, getEspecialidadesCasos_ } from "./Caso.js";
-import { getClienteViewForm_, getDatosGeograficos_ } from "./cliente.js";
+import * as casos from "./Caso.js";
+import * as cliente from "./cliente.js";
 
 // function ejemplo crearEmpleado CRUD isi
 async function loadClienteData(obj) {
@@ -59,15 +59,11 @@ async function loadCasosForm(obj) {
     const userType = obj.loginInUse == "false" ? "noAplica" : await utilidades.validarTipoUsuario(obj.sesion);
     switch (userType) {
         case "noAplica":
-            // return {
-            //     form: await crearCliente.getClienteViewForm_(),
-            //     datosGeograficos: await crearCliente.getDatosGeograficos_()
-            // }
             break;
         case "admin":
             return {
-                form: await getCasoViewForm_(),
-                especialidadesCaso: await getEspecialidadesCasos_()
+                form: await casos.getCasoViewForm_(),
+                especialidadesCaso: await casos.getEspecialidadesCasos_()
             }
             break;
         case "abogado":
@@ -81,14 +77,16 @@ async function loadCasosForm(obj) {
     }
 }
 
-async function loadClienteView(obj) {
-    const userType = obj.loginInUse == "false" ? "noAplica" : utilidades.validarTipoUsuario(obj.sesion);
+async function loadClientForm(obj) {
+    const userType = obj.loginInUse == "false" ? "noAplica" : await utilidades.validarTipoUsuario(obj.sesion);
     switch (userType) {
+        case "noAplica":
+            break;
         case "admin":
-            return loadPartialHtml_("F-E_genericHtmlTemplate", {
-                form: await getClienteViewForm_(),
-                datosGeograficos: await getDatosGeograficos_()
-            });
+            return {
+                form: await cliente.getClienteViewForm_(),
+                datosGeograficos: await cliente.getDatosGeograficos_()
+            }
             break;
         case "abogado":
             // code block
@@ -97,7 +95,7 @@ async function loadClienteView(obj) {
             // code block
             break;
         default:
-        // code block
+            "No puede hace nada"
     }
 }
 
@@ -105,9 +103,9 @@ async function loadClientesTblGhfView(obj) {
     const userType = obj.loginInUse == "false" ? "noAplica" : utilidades.validarTipoUsuario(obj.sesion);
     switch (userType) {
         case "noAplica":
-            // return {
-            //     arrOfList: getDataTblGhf_(obj)//ESTA ES LA FUNCION QUE SE DEBE EJECUTAR 
-            // }
+            return {
+                arrOfList: getDataTblGhf_(obj)//ESTA ES LA FUNCION QUE SE DEBE EJECUTAR 
+            }
             break;
         case "admin":
             // code block
@@ -126,7 +124,6 @@ async function loadClientesTblGhfView(obj) {
 export {
     loadClienteForm,
     loadClienteData,
-    loadClienteView,
     loadCasosForm,
-    loadClientesTblGhfView,
+    loadClientForm
 }

@@ -11,16 +11,16 @@ async function loadNavbar() {
     });
 
     document.getElementById('navbar').innerHTML = data.html;
-    loadFormGhfCrearCliente();
+    loadFormIsiCrearCliente();
 }
 
 // Ejemplo solicitud CRUD isi cuando sin modal
-function loadFormGhfCrearCliente() {
+function loadFormIsiCrearCliente() {
     let e = {};
     e.target = {};
     e.target.edit = false;
     e.target.modal = false;
-    e.partialFuncName = "loadClienteView_";
+    e.partialFuncName = "loadClienteView";
     e.partialFuncOtherParam = {};
     e.formId = "form-generic";
     e.newFormId = "form-cliente";
@@ -32,17 +32,12 @@ function loadFormGhfCrearCliente() {
         cancelBtnId: "",
         cancelBtnDataSets: []
     };
-    e.eazyDropDown = [
-        {
-            isInTemp: false,
-            idsArr: ["paisCliente", "departamentoCliente", "ciudadCliente"],
-            arrOtherDataKey: "datosGeograficos"
-        }
+
+    e.eazyDropDown = [];
+
+    e.buttonsOnTopForm = [
+    
     ];
-
-    e.buttonsOnTopForm = [];
-
-    console.log({ baseForm: e })
 
     dinamicInput.loadFormGhf(e);
 }
@@ -72,7 +67,7 @@ async function crearCliente(e) {
 
     if (JSON.parse(response).resultInserts[0] == "ok") {
         document.getElementById("subModalBody").innerHTML = "", $('#subModal').modal('hide');
-        // window.location.href = "./agentList";
+        window.location.href = "./agentList";
         alert("Se ha guardado la información")
     } else {
         alert(JSON.parse(response).resultInserts[1])

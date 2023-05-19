@@ -177,5 +177,5 @@ async function getEspecialidadesCasos_() {
 
 export {
     getCasoViewForm_,
-    getEspecialidadesCasos_,
+    getEspecialidadesCasos_
 }

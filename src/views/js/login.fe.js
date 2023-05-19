@@ -1,5 +1,4 @@
 import * as utilidades from "./utilidades.je.js";
-import './Caso.fe.js'
 
 'use strict'
 
@@ -42,16 +41,13 @@ const tryLogin = async () => {
         }
       });
   } else {
-
-    window.location.href = ".crearCaso";
+    window.location.href = ".home";
     sessionStorage.setItem("user", user);
     sessionStorage.setItem("sesion", result);
     utilidades.loadingEnd();
 
     swal("Alerta!", "Usuario o clave incorrecta!", "error");
   }
-
-
 }
 
 const login = async () => {
@@ -72,7 +68,7 @@ const login = async () => {
   } else {
     sessionStorage.setItem("user", user);
     sessionStorage.setItem("sesion", result);
-    window.location.href = "./crearCaso";
+    window.location.href = "./home";
     utilidades.loadingEnd();
   }
 }

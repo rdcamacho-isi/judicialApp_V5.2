@@ -2,39 +2,45 @@ import { utilidades } from "./backend.js";
 import * as sql from "./sql.js";
 import * as dinamicInput from "./Tools/dinamicInput.crud.be.js";
 
-function getClienteViewForm_() {
+async function getClienteViewForm_() {
+    let promises = [];
 
-    const tipoIdentificacion = ghfBdConnection.api([{
-        queryType: `select`, query: `SELECT
-            Tbl_D_tiposIdentificacionPesonas.tipoIdentificacion AS innerHtml,
-            Tbl_D_tiposIdentificacionPesonas.idTipoIdentificacion AS value
-        FROM
-            Tbl_D_tiposIdentificacionPesonas
-        WHERE
-            Tbl_D_tiposIdentificacionPesonas.Estado = "A"
-        ORDER BY Tbl_D_tiposIdentificacionPesonas.tipoIdentificacion`
-    }], paramsForApiBdConnection)[0][3];
+    const tipoIdentificacionQuery = sql.bdConnection('select', `SELECT
+        Tbl_D_tiposIdentificacionPesonas.tipoIdentificacion AS innerHtml,
+        Tbl_D_tiposIdentificacionPesonas.idTipoIdentificacion AS value
+    FROM
+        Tbl_D_tiposIdentificacionPesonas
+    WHERE
+        Tbl_D_tiposIdentificacionPesonas.Estado = "A"
+    ORDER BY Tbl_D_tiposIdentificacionPesonas.tipoIdentificacion`);
 
-    const indicativosTelefonicos = ghfBdConnection.api([{
-        queryType: `select`, query: `SELECT
-            CONCAT(Tbl_Dane_paises.phone_code, " - ", Tbl_Dane_paises.name) AS innerHtml,
-            Tbl_Dane_paises.phone_code AS value
-        FROM
-            Tbl_Dane_paises
-        ORDER BY Tbl_Dane_paises.phone_code `
-    }], paramsForApiBdConnection)[0][3];
+    promises.push(tipoIdentificacionQuery);
 
+    const tiendasQuery = sql.bdConnection('select', `SELECT 
+        CONCAT(Tbl_A_personas.numeroIdentificacion, " - ", Tbl_A_personas.nombre) AS innerHtml,
+        Tbl_A_personas.idPersonas AS value
+    FROM
+        Tbl_A_personas
+    WHERE
+        Tbl_A_personas.tipoPersona = "Store"`);
+
+    promises.push(tiendasQuery);
+
+    const response = await Promise.all(promises);
+
+    const tipoIdentificacion = response[0].resultAsArrPerCol;
+    const tiendas = response[1].resultAsArrPerCol;
 
     return [
         {//START SELECT tipoPersona
             "label": {
-                "titulo": "Tipo de persona",
+                "titulo": "Type of collaborator",
                 "forAttr": "tipoPersona"
             },
             "tipoTag": "dinamicSelectGhf",
             "opcionesSelect": {
-                "innerHtml": ['Natural', 'Juridica'],
-                "value": ['Natural', 'Juridica']
+                "innerHtml": ['Agent', 'Store'],
+                "value": ['Agent', 'Store']
             },
             "atributosTag": [
                 { "id": "tipoPersona" },
@@ -47,34 +53,7 @@ function getClienteViewForm_() {
                 { "bdlf": "no" },
                 { "json": "no" },
                 { "summer": "no" },
-                { "funcCriteria": "Natural|temp-personaNatural|box-inputEspecificosTipoPersona(-ghf-)Juridica|temp-personaJuridica|box-inputEspecificosTipoPersona" },
-                { "dependenciaEazyDropDown": "no" },
-                { "selectWithSearch": "no" }
-            ]
-        }//END SELECT
-        ,
-        {//START SELECT tipoIdentificacion
-            "label": {
-                "titulo": "Tipo de identificación",
-                "forAttr": "tipoIdentificacion"
-            },
-            "tipoTag": "dinamicSelectGhf",
-            "opcionesSelect": {
-                "innerHtml": tipoIdentificacion.innerHtml,
-                "value": tipoIdentificacion.value
-            },
-            "atributosTag": [
-                { "id": "tipoIdentificacion" },
-                { "required": "true" },
-                { "name": "" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "nfvf0jbEUg3S9XJuMRkIaA==" },
-                { "bdlf": "no" },
-                { "json": "no" },
-                { "summer": "no" },
-                { "funcCriteria": "no" },
+                { "funcCriteria": "Agent|temp-personaNatural|box-inputEspecificosTipoPersona(-ghf-)Store|temp-personaJuridica|box-inputEspecificosTipoPersona" },
                 { "dependenciaEazyDropDown": "no" },
                 { "selectWithSearch": "no" }
             ]
@@ -82,8 +61,8 @@ function getClienteViewForm_() {
         ,
         {//START INPUT numeroIdentificacion
             "label": {
-                "titulo": "Numero identificación",
-                "forAttr": "numeroIdentificacion"
+                "titulo": "Id in ASA betting software",
+                "forAttr": "idAsaBettingSoftware"
             },
             "tipoTag": "dinamicInputGhf",
             "datalist": {
@@ -91,10 +70,10 @@ function getClienteViewForm_() {
                 "value": []
             },
             "atributosTag": [
-                { "id": "numeroIdentificacion" },
-                { "type": "number" },
+                { "id": "idAsaBettingSoftware" },
+                { "type": "text" },
                 { "required": "true" },
-                { "list": "list-numeroIdentificacion" },
+                { "list": "list-idAsaBettingSoftware" },
                 { "name": "name-" },
                 { "min": "0" }
             ],
@@ -111,7 +90,7 @@ function getClienteViewForm_() {
         ,
         {//START INPUT Nombre
             "label": {
-                "titulo": "Nombre",
+                "titulo": "Name",
                 "forAttr": "nombreCliente"
             },
             "tipoTag": "dinamicInputGhf",
@@ -154,7 +133,7 @@ function getClienteViewForm_() {
             "tags": [
                 {//START INPUT apellidoCliente
                     "label": {
-                        "titulo": "Apellido",
+                        "titulo": "Last name",
                         "forAttr": "apellidoCliente"
                     },
                     "tipoTag": "dinamicInputGhf",
@@ -183,17 +162,16 @@ function getClienteViewForm_() {
                 ,
                 {//START SELECT generoCliente
                     "label": {
-                        "titulo": "Genero",
+                        "titulo": "Gender",
                         "forAttr": "generoCliente"
                     },
                     "tipoTag": "dinamicSelectGhf",
                     "opcionesSelect": {
-                        "innerHtml": ["Masculino", "Femenino"],
-                        "value": ["Masculino", "Femenino"]
+                        "innerHtml": ["Male", "Female"],
+                        "value": ["Male", "Female"]
                     },
                     "atributosTag": [
                         { "id": "generoCliente" },
-                        { "required": "true" },
                         { "name": "" }
                     ],
                     "datasetTag": [
@@ -217,7 +195,7 @@ function getClienteViewForm_() {
             "tags": [
                 {//START INPUT nombreRepresentateLegal
                     "label": {
-                        "titulo": "Nombre representate legal",
+                        "titulo": "Owner's name",
                         "forAttr": "nombreRepresentateLegal"
                     },
                     "tipoTag": "dinamicInputGhf",
@@ -241,12 +219,12 @@ function getClienteViewForm_() {
                         { "numericTempGenerator": "no" },
                         { "rowTitle": "no" }
                     ]
-                }//END INPUT         
+                }//END INPUT,
                 ,
-                {//START INPUT nombreRepresentateLegalSuplente
+                {//START INPUT numberOtherStoresToAssociate
                     "label": {
-                        "titulo": "Nombre representate legal suplente",
-                        "forAttr": "nombreRepresentateLegalSuplente"
+                        "titulo": "If you want to associate other stores to this agent, please indicate how many",
+                        "forAttr": "numberOtherStoresToAssociate"
                     },
                     "tipoTag": "dinamicInputGhf",
                     "datalist": {
@@ -254,164 +232,74 @@ function getClienteViewForm_() {
                         "value": []
                     },
                     "atributosTag": [
-                        { "id": "nombreRepresentateLegalSuplente" },
-                        { "type": "text" },
-                        { "list": "list-nombreRepresentateLegalSuplente" },
-                        { "name": "name-" },
-                        { "onkeyup": "this.value = this.value.toUpperCase();" }
+                        { "id": "numberOtherStoresToAssociate" },
+                        { "type": "number" },
+                        { "required": "true" },
+                        { "list": "list-numberOtherStoresToAssociate" },
+                        { "name": "name-numberOtherStoresToAssociate" },
+                        { "min": "0" }
                     ],
                     "datasetTag": [
                         { "form": "cliente" },
                         { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
                         { "bdlf": "no" },
-                        { "json": "nombreRepresentateLegalSuplente" },
+                        { "json": "numberOtherStoresToAssociate" },
                         { "summer": "no" },
-                        { "numericTempGenerator": "no" },
-                        { "rowTitle": "no" }
+                        { "numericTempGenerator": "si" },
+                        { "rowTitle": "Dependent store" }
                     ]
-                }//END INPUT         
+                }//END INPUT
                 ,
-                {//START INPUT paginaWebCliente
-                    "label": {
-                        "titulo": "Pagina Web",
-                        "forAttr": "paginaWebCliente"
-                    },
-                    "tipoTag": "dinamicInputGhf",
-                    "datalist": {
-                        "innerHtml": [],
-                        "value": []
-                    },
+                {//START DIV numberOtherStoresToAssociate
+                    "tipoTag": "dinamicDivGhf",
                     "atributosTag": [
-                        { "id": "paginaWebCliente" },
-                        { "type": "text" },
-                        { "list": "list-paginaWebCliente" },
-                        { "name": "name-" },
-                        { "onkeyup": "this.value = this.value.toLowerCase();" }
+                        { "id": "box-numberOtherStoresToAssociate" }
                     ],
                     "datasetTag": [
-                        { "form": "cliente" },
-                        { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                        { "bdlf": "no" },
-                        { "json": "paginaWebCliente" },
-                        { "summer": "no" },
-                        { "numericTempGenerator": "no" },
-                        { "rowTitle": "no" }
+                        { style: "paddingLeft,2.5%|paddingRigth,2.5%" }
                     ]
-                }//END INPUT        
+                }//END DIV     
+
             ]
         }//END TEMPLATE    
         ,
-        {//START SELECT paisCliente
-            "label": {
-                "titulo": "País",
-                "forAttr": "paisCliente"
-            },
-            "tipoTag": "dinamicSelectGhf",
-            "opcionesSelect": {
-                "innerHtml": [],
-                "value": []
-            },
-            "atributosTag": [
-                { "id": "paisCliente" },
-                { "required": "true" },
-                { "name": "" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                { "bdlf": "no" },
-                { "json": "paisCliente" },
-                { "summer": "no" },
-                { "funcCriteria": "no" },
-                { "dependenciaEazyDropDown": "no" },
-                { "selectWithSearch": "no" }
+        {//START TEMPLATE numberOtherStoresToAssociate
+            "tipoTag": "dinamicTemplateGhf",
+            "idDestination": "form-cliente",
+            "idTemp": "temp-numberOtherStoresToAssociate",
+            "tags": [
+                {//START SELECT StoreToAssociate
+                    "label": {
+                        "titulo": "Select the store you want to associate",
+                        "forAttr": "StoreToAssociate"
+                    },
+                    "tipoTag": "dinamicSelectGhf",
+                    "opcionesSelect": {
+                        "innerHtml": tiendas.innerHtml,
+                        "value": tiendas.value
+                    },
+                    "atributosTag": [
+                        { "id": "StoreToAssociate" },
+                        { "required": "true" },
+                        { "name": "name-StoreToAssociate" }
+                    ],
+                    "datasetTag": [
+                        { "form": "cliente" },
+                        { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
+                        { "bdlf": "no" },
+                        { "json": "StoreToAssociate" },
+                        { "summer": "no" },
+                        { "funcCriteria": "no" },
+                        { "dependenciaEazyDropDown": "no" },
+                        { "selectWithSearch": "no" }
+                    ]
+                }//END SELECT        
             ]
-        }//END SELECT    
-        ,
-        {//START SELECT departamentoCliente
-            "label": {
-                "titulo": "Departamento/Estado",
-                "forAttr": "departamentoCliente"
-            },
-            "tipoTag": "dinamicSelectGhf",
-            "opcionesSelect": {
-                "innerHtml": [],
-                "value": []
-            },
-            "atributosTag": [
-                { "id": "departamentoCliente" },
-                { "required": "true" },
-                { "name": "" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                { "bdlf": "" },
-                { "json": "departamentoCliente" },
-                { "summer": "no" },
-                { "funcCriteria": "no" },
-                { "dependenciaEazyDropDown": "paisCliente" },
-                { "selectWithSearch": "no" }
-            ]
-        }//END SELECT
-        ,
-        {//START SELECT ciudadCliente
-            "label": {
-                "titulo": "Ciudad/Municipio",
-                "forAttr": "ciudadCliente"
-            },
-            "tipoTag": "dinamicSelectGhf",
-            "opcionesSelect": {
-                "innerHtml": [],
-                "value": []
-            },
-            "atributosTag": [
-                { "id": "ciudadCliente" },
-                { "required": "true" },
-                { "name": "" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "2i70LTJ0hFKOK+iZOiDH1A==" },
-                { "bdlf": "no" },
-                { "json": "no" },
-                { "summer": "no" },
-                { "funcCriteria": "no" },
-                { "dependenciaEazyDropDown": "paisCliente|departamentoCliente" },
-                { "selectWithSearch": "no" }
-            ]
-        }//END SELECT    
-        ,
-        {//START SELECT idioma
-            "label": {
-                "titulo": "Idioma",
-                "forAttr": "idioma"
-            },
-            "tipoTag": "dinamicSelectGhf",
-            "opcionesSelect": {
-                "innerHtml": ["Español", "Ingles"],
-                "value": ["Español", "Ingles"]
-            },
-            "atributosTag": [
-                { "id": "idioma" },
-                { "required": "true" },
-                { "name": "" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                { "bdlf": "no" },
-                { "json": "idioma" },
-                { "summer": "no" },
-                { "funcCriteria": "no" },
-                { "dependenciaEazyDropDown": "no" },
-                { "selectWithSearch": "no" }
-            ]
-        }//END SELECT
+        }//END TEMPLATE       
         ,
         {//START INPUT totalNumeroTelefonosQueDeseaAgregar
             "label": {
-                "titulo": "Numero total de telefonos para notificación que desea agregar",
+                "titulo": "How many cell or phone numbers do you want to add?",
                 "forAttr": "totalNumeroTelefonosQueDeseaAgregar"
             },
             "tipoTag": "dinamicInputGhf",
@@ -434,7 +322,7 @@ function getClienteViewForm_() {
                 { "json": "totalNumeroTelefonosQueDeseaAgregar" },
                 { "summer": "no" },
                 { "numericTempGenerator": "si" },
-                { "rowTitle": "Telefono notificación" }
+                { "rowTitle": "Phone" }
             ]
         }//END INPUT  
         ,
@@ -455,13 +343,13 @@ function getClienteViewForm_() {
             "tags": [
                 {//START SELECT indicativoTelefonoCliente
                     "label": {
-                        "titulo": "Indicativo",
+                        "titulo": "Type",
                         "forAttr": "indicativoTelefonoCliente"
                     },
                     "tipoTag": "dinamicSelectGhf",
                     "opcionesSelect": {
-                        "innerHtml": indicativosTelefonicos.innerHtml,
-                        "value": indicativosTelefonicos.value
+                        "innerHtml": ['Home', 'Work', 'Other'],
+                        "value": ['Home', 'Work', 'Other']
                     },
                     "atributosTag": [
                         { "id": "indicativoTelefonoCliente" },
@@ -482,7 +370,7 @@ function getClienteViewForm_() {
                 ,
                 {//START INPUT numeroTelefonoCliente
                     "label": {
-                        "titulo": "Numero telefono cliente",
+                        "titulo": "Number",
                         "forAttr": "numeroTelefonoCliente"
                     },
                     "tipoTag": "dinamicInputGhf",
@@ -510,113 +398,9 @@ function getClienteViewForm_() {
             ]
         }//END TEMPLATE   
         ,
-        {//START INPUT totalNumeroDireccionesQueDeseaAgregar
-            "label": {
-                "titulo": "Numero total de direcciones para notificación que desea agregar",
-                "forAttr": "totalNumeroDireccionesQueDeseaAgregar"
-            },
-            "tipoTag": "dinamicInputGhf",
-            "datalist": {
-                "innerHtml": [],
-                "value": []
-            },
-            "atributosTag": [
-                { "id": "totalNumeroDireccionesQueDeseaAgregar" },
-                { "type": "number" },
-                { "required": "true" },
-                { "list": "list-totalNumeroDireccionesQueDeseaAgregar" },
-                { "name": "name-totalNumeroDireccionesQueDeseaAgregar" },
-                { "min": "0" }
-            ],
-            "datasetTag": [
-                { "form": "cliente" },
-                { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                { "bdlf": "no" },
-                { "json": "totalNumeroDireccionesQueDeseaAgregar" },
-                { "summer": "no" },
-                { "numericTempGenerator": "si" },
-                { "rowTitle": "Dirección notificación" }
-            ]
-        }//END INPUT  
-        ,
-        {//START DIV totalNumeroDireccionesQueDeseaAgregar
-            "tipoTag": "dinamicDivGhf",
-            "atributosTag": [
-                { "id": "box-totalNumeroDireccionesQueDeseaAgregar" }
-            ],
-            "datasetTag": [
-                { style: "paddingLeft,2.5%|paddingRigth,2.5%" }
-            ]
-        }//END DIV
-        ,
-        {//START TEMPLATE totalNumeroDireccionesQueDeseaAgregar
-            "tipoTag": "dinamicTemplateGhf",
-            "idDestination": "form-cliente",
-            "idTemp": "temp-totalNumeroDireccionesQueDeseaAgregar",
-            "tags": [
-                {//START INPUT barrioCliente
-                    "label": {
-                        "titulo": "Barrio",
-                        "forAttr": "barrioCliente"
-                    },
-                    "tipoTag": "dinamicInputGhf",
-                    "datalist": {
-                        "innerHtml": [],
-                        "value": []
-                    },
-                    "atributosTag": [
-                        { "id": "barrioCliente" },
-                        { "type": "text" },
-                        { "required": "true" },
-                        { "list": "list-barrioCliente" },
-                        { "name": "name-totalNumeroDireccionesQueDeseaAgregar" },
-                        { "onkeyup": "this.value = this.value.toUpperCase();" }
-                    ],
-                    "datasetTag": [
-                        { "form": "cliente" },
-                        { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                        { "bdlf": "no" },
-                        { "json": "barrioCliente" },
-                        { "summer": "no" },
-                        { "numericTempGenerator": "no" },
-                        { "rowTitle": "no" }
-                    ]
-                }//END INPUT
-                ,
-                {//START INPUT direccionCliente
-                    "label": {
-                        "titulo": "Dirección",
-                        "forAttr": "direccionCliente"
-                    },
-                    "tipoTag": "dinamicInputGhf",
-                    "datalist": {
-                        "innerHtml": [],
-                        "value": []
-                    },
-                    "atributosTag": [
-                        { "id": "direccionCliente" },
-                        { "type": "text" },
-                        { "required": "true" },
-                        { "list": "list-direccionCliente" },
-                        { "name": "name-totalNumeroDireccionesQueDeseaAgregar" },
-                        { "onkeyup": "this.value = this.value.toUpperCase();" }
-                    ],
-                    "datasetTag": [
-                        { "form": "cliente" },
-                        { "cbd": "VgaSiNrAy7C1gYlw9JgkLw==" },
-                        { "bdlf": "no" },
-                        { "json": "direccionCliente" },
-                        { "summer": "no" },
-                        { "numericTempGenerator": "no" },
-                        { "rowTitle": "no" }
-                    ]
-                }//END INPUT                        
-            ]
-        }//END TEMPLATE  
-        ,
         {//START INPUT totalNumeroMailQueDeseaAgregar
             "label": {
-                "titulo": "Numero total de correos electrónico para notificación que desea agregar",
+                "titulo": "How many emails do you want to add?",
                 "forAttr": "totalNumeroMailQueDeseaAgregar"
             },
             "tipoTag": "dinamicInputGhf",
@@ -630,7 +414,7 @@ function getClienteViewForm_() {
                 { "required": "true" },
                 { "list": "list-totalNumeroMailQueDeseaAgregar" },
                 { "name": "name-totalNumeroMailQueDeseaAgregar" },
-                { "min": "0" }
+                { "min": "1" }
             ],
             "datasetTag": [
                 { "form": "cliente" },
@@ -639,7 +423,7 @@ function getClienteViewForm_() {
                 { "json": "totalNumeroMailQueDeseaAgregar" },
                 { "summer": "no" },
                 { "numericTempGenerator": "si" },
-                { "rowTitle": "Correo electrónico notificación" }
+                { "rowTitle": "Email" }
             ]
         }//END INPUT  
         ,
@@ -660,7 +444,7 @@ function getClienteViewForm_() {
             "tags": [
                 {//START INPUT correoElectronicoCliente
                     "label": {
-                        "titulo": "Correo electrónico",
+                        "titulo": "email",
                         "forAttr": "correoElectronicoCliente"
                     },
                     "tipoTag": "dinamicInputGhf",
@@ -693,18 +477,18 @@ function getClienteViewForm_() {
 
 async function getDatosGeograficos_() {
     const r = await sql.bdConnection('select', `SELECT
-    Tbl_Dane_paises.name AS pais,
-    Tbl_Dane_departamentos.nombre AS departamento,
-    CONCAT(Tbl_Dane_municipios.nombre,"|",Tbl_Dane_municipios.idMunicipio) AS municipio
+        Tbl_Dane_paises.name AS pais,
+        Tbl_Dane_departamentos.nombre AS departamento,
+        CONCAT(Tbl_Dane_municipios.nombre,"|",Tbl_Dane_municipios.idMunicipio) AS municipio
     FROM
         Tbl_Dane_paises
     LEFT JOIN Tbl_Dane_departamentos ON Tbl_Dane_departamentos.idPais = Tbl_Dane_paises.idPais
-    LEFT JOIN Tbl_Dane_municipios ON Tbl_Dane_municipios.idDepartamento = Tbl_Dane_departamentos.idDepartamento`)
+    LEFT JOIN Tbl_Dane_municipios ON Tbl_Dane_municipios.idDepartamento = Tbl_Dane_departamentos.idDepartamento`);
 
-    return r.resultAsTwoDimesionalArr;
+    return r.resultAsTwoDimesionalArr
 }
 
 export {
     getClienteViewForm_,
-    getDatosGeograficos_,
+    getDatosGeograficos_
 }

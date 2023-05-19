@@ -11,7 +11,6 @@ async function loadNavbar() {
     });
 
     document.getElementById('navbar').innerHTML = data.html;
-    // utilidades.loadingEnd();
     loadFormToCreateCaso();
 }
 
@@ -115,6 +114,11 @@ function changeEventHandler(e) {
 
 //Esta funcion es la que maneja todos los eventos input
 function inputEventHandler(e) { }
+
+document.querySelector('body').addEventListener("click", clickEventHandler);
+document.querySelector('body').addEventListener("change", changeEventHandler);
+document.querySelector('body').addEventListener("input", inputEventHandler);
+document.addEventListener("DOMContentLoaded", loadNavbar);
 
 document.querySelector('body').addEventListener("click", clickEventHandler);
 document.querySelector('body').addEventListener("change", changeEventHandler);

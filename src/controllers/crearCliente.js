@@ -26,9 +26,9 @@ async function getDataForEditClienteViewForm_(criteriosFrontEnd) {
 
   objWithEncriptedCols = objWithEncriptedCols.resultAsObj;
 
-  console.log({objWithEncriptedCols});
+  console.log({ objWithEncriptedCols });
 
-  console.log({validaEsto: objWithEncriptedCols[0]["obj"]});
+  console.log({ validaEsto: objWithEncriptedCols[0]["obj"] });
 
   objWithEncriptedCols = JSON.parse(utilidades.fixJson(objWithEncriptedCols[0]["obj"]))//Esta linea es necesaria para solucionar saltos de linea y tab spaces en summer note y text area
   objWithEncriptedCols["keysBd"] = objWithEncriptedCols.obj;
@@ -58,14 +58,14 @@ async function getClienteViewForm_() {
   promises.push(tipoIdentificacionQuery);
 
   const tiendasQuery = sql.bdConnection('select', `SELECT 
-        CONCAT(tbl_a_personas.numeroIdentificacion, " - ", tbl_a_personas.nombre) AS innerHtml,
-        tbl_a_personas.idPersonas AS value
+        CONCAT(Tbl_A_personas.numeroIdentificacion, " - ", Tbl_A_personas.nombre) AS innerHtml,
+        Tbl_A_personas.idPersonas AS value
       FROM
-        tbl_a_personas
+        Tbl_A_personas
       WHERE
-        tbl_a_personas.tipoPersona = "Store"`);
+        Tbl_A_personas.tipoPersona = "Store"`);
 
-  promises.push(tiendasQuery);  
+  promises.push(tiendasQuery);
 
   const response = await Promise.all(promises);
 
@@ -300,7 +300,7 @@ async function getClienteViewForm_() {
             { style: "paddingLeft,2.5%|paddingRigth,2.5%" }
           ]
         }//END DIV     
-            
+
       ]
     }//END TEMPLATE    
     ,

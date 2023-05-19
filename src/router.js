@@ -17,7 +17,6 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-
 async function getHtmlContent(filename) {
   try {
     const filePath = join(__dirname, filename);
@@ -75,7 +74,6 @@ router.post('/getNavBar', bodyParser.json(), async (req, res) => {
   res.send(responseData);
 });
 
-
 //Cunado se usa el login con este POST intenta hacerlo
 router.post('/tryLogin', bodyParser.json(), async (req, res) => {
   // console.log({ paramsFromFrontEnd: req.body.data });
@@ -107,7 +105,6 @@ router.post('/login', bodyParser.json(), async (req, res) => {
   res.send(result);
 });
 
-
 //Este POST es para validar si hay sesiones abieras y cerrarla en caso de que no esten ectivas en la BD
 router.post('/closeLogin', bodyParser.json(), async (req, res) => {
   // console.log({ paramsFromFrontEnd: req.body.data });
@@ -123,7 +120,6 @@ router.post('/closeLogin', bodyParser.json(), async (req, res) => {
   res.send(result);
 });
 
-
 // Ejemplo de llamado a loadPartials cuando quiero crear un CRUD
 router.post('/loadClienteView', bodyParser.json(), async (req, res) => {
   // console.log({ paramsFromFrontEnd: req.body.data });
@@ -134,7 +130,6 @@ router.post('/loadClienteView', bodyParser.json(), async (req, res) => {
   }
 
   const dataReq = req.body.data;
-
 
   const responseData = {
     otherData: await backend.loadPartials.loadClienteForm(dataReq),
@@ -198,8 +193,6 @@ router.post('/updateBdGhf', bodyParser.json(), async (req, res) => {
   }
 });
 
-
-
 // Ejemplo de llamado a loadPartials cuando quiero crear un CRUD
 router.post('/getDataForEditClienteViewForm', bodyParser.json(), async (req, res) => {
   console.log({ postEnEjecucion: 'getDataForEditClienteViewForm' })
@@ -223,29 +216,6 @@ router.post('/getDataForEditClienteViewForm', bodyParser.json(), async (req, res
   res.send(responseData);
 });
 
-
-// router.post('/getDataForEditClienteViewForm', bodyParser.json(), async (req, res) => {
-//   console.log({ postEnEjecucion: 'getDataForEditClienteViewForm' })
-//   console.log({ paramsFromFrontEnd: req.body.data });
-//   if (!req.body.data) {
-//     console.log('No data found in the request body');
-//     res.status(400).send('Bad Request: No data found in the request body');
-//     return;
-//   }
-
-//   const dataReq = JSON.parse(JSON.stringify(req.body.data));
-
-//   console.log({ dataReq });
-
-//   const responseData = {
-//     otherData: await backend.loadPartials.loadClienteData(dataReq)
-//   }
-
-//   console.log({ backendResponse: responseData });
-
-//   res.send(responseData);
-// });
-
 router.post('/loadCasoView', bodyParser.json(), async (req, res) => {
   // console.log({ paramsFromFrontEnd: req.body.data });
   if (!req.body.data) {
@@ -261,12 +231,12 @@ router.post('/loadCasoView', bodyParser.json(), async (req, res) => {
     html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
   }
 
-  // console.log({backendResponse: responseData}); 
+  // console.log({backendResponse: responseData});
 
   res.send(responseData);
 });
 
-router.post('/loadClienteView_', bodyParser.json(), async (req, res) => {
+router.post('/loadClientView', bodyParser.json(), async (req, res) => {
   // console.log({ paramsFromFrontEnd: req.body.data });
   if (!req.body.data) {
     console.log('No data found in the request body');
@@ -277,7 +247,7 @@ router.post('/loadClienteView_', bodyParser.json(), async (req, res) => {
   const dataReq = req.body.data;
 
   const responseData = {
-    otherData: await backend.loadPartials.loadClienteView(dataReq),
+    otherData: await backend.loadPartials.loadClientForm(dataReq),
     html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
   }
 
