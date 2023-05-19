@@ -119,8 +119,3 @@ document.querySelector('body').addEventListener("click", clickEventHandler);
 document.querySelector('body').addEventListener("change", changeEventHandler);
 document.querySelector('body').addEventListener("input", inputEventHandler);
 document.addEventListener("DOMContentLoaded", loadNavbar);
-
-document.querySelector('body').addEventListener("click", clickEventHandler);
-document.querySelector('body').addEventListener("change", changeEventHandler);
-document.querySelector('body').addEventListener("input", inputEventHandler);
-document.addEventListener("DOMContentLoaded", loadNavbar);
