@@ -51,6 +51,10 @@ router.get('/crearCaso', (req, res) => {
   res.sendFile(join(__dirname, '/views/templates/caso.html'))
 })
 
+router.get('/crearCliente', (req, res) => {
+  res.sendFile(join(__dirname, '/views/templates/cliente.html'))
+})
+
 //POST HTTP METHODS
 
 router.post('/getNavBar', bodyParser.json(), async (req, res) => {
@@ -224,6 +228,26 @@ router.post('/loadCasoView', bodyParser.json(), async (req, res) => {
 
   const responseData = {
     otherData: await backend.loadPartials.loadCasosForm(dataReq),
+    html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
+  }
+
+  // console.log({backendResponse: responseData});
+
+  res.send(responseData);
+});
+
+router.post('/loadClientView', bodyParser.json(), async (req, res) => {
+  // console.log({ paramsFromFrontEnd: req.body.data });
+  if (!req.body.data) {
+    console.log('No data found in the request body');
+    res.status(400).send('Bad Request: No data found in the request body');
+    return;
+  }
+
+  const dataReq = req.body.data;
+
+  const responseData = {
+    otherData: await backend.loadPartials.loadClientForm(dataReq),
     html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
   }
 
