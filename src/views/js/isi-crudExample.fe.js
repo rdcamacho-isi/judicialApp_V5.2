@@ -1,5 +1,6 @@
 // En caso de que no se vaya a usar el login no se debe usar la siguiente linea
 // import login from "./login.js"; 
+// Ejemplo
 
 import * as utilidades from "./utilidades.je.js";
 import * as dinamicInput from "./Tools/isi/dinamicInput.crud.fe.js";

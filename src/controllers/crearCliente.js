@@ -1,3 +1,5 @@
+// Ejemplo
+
 import { utilidades } from "./backend.js";
 import * as sql from "./sql.js";
 import * as dinamicInput from "./Tools/dinamicInput.crud.be.js";
@@ -28,13 +30,13 @@ async function getDataForEditClienteViewForm_(criteriosFrontEnd) {
 
   console.log({ objWithEncriptedCols });
 
-  console.log({ validaEsto: objWithEncriptedCols[0]["obj"] });
+  // console.log({ validaEsto: objWithEncriptedCols[0]["obj"] });
 
   objWithEncriptedCols = JSON.parse(utilidades.fixJson(objWithEncriptedCols[0]["obj"]))//Esta linea es necesaria para solucionar saltos de linea y tab spaces en summer note y text area
   objWithEncriptedCols["keysBd"] = objWithEncriptedCols.obj;
 
 
-  var whereCriteria = `WHERE Tbl_A_personas.idPersonas = "${criteriosFrontEnd.id}"`;
+  var whereCriteria = `WHERE Tbl_A_personas.idPersonas = "${criteriosFrontEnd.id}"`; // Sólamente cambia esta línea
 
   return {
     keyAndValues: JSON.stringify(dinamicInput.selectEncriptedObjInBd(objWithEncriptedCols, whereCriteria)),

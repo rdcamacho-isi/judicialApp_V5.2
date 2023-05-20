@@ -11,16 +11,16 @@ async function loadNavbar() {
     });
 
     document.getElementById('navbar').innerHTML = data.html;
-    loadFormIsiCrearCliente();
+    loadFormGhfCrearCliente();
 }
 
 // Ejemplo solicitud CRUD isi cuando sin modal
-function loadFormIsiCrearCliente() {
-    let e = {};
-    e.target = {};
+function loadFormGhfCrearCliente() {
+    let e = {}
+    e.target = {}
     e.target.edit = false;
     e.target.modal = false;
-    e.partialFuncName = "loadClienteView";
+    e.partialFuncName = "loadClientView";
     e.partialFuncOtherParam = {};
     e.formId = "form-generic";
     e.newFormId = "form-cliente";
@@ -32,12 +32,17 @@ function loadFormIsiCrearCliente() {
         cancelBtnId: "",
         cancelBtnDataSets: []
     };
-
-    e.eazyDropDown = [];
-
-    e.buttonsOnTopForm = [
-    
+    e.eazyDropDown = [
+        {
+            isInTemp: false,
+            idsArr: ["paisCliente", "departamentoCliente", "ciudadCliente"],
+            arrOtherDataKey: "datosGeograficos"
+        }
     ];
+
+    e.buttonsOnTopForm = [];
+
+    console.log({ baseForm: e })
 
     dinamicInput.loadFormGhf(e);
 }
@@ -67,13 +72,89 @@ async function crearCliente(e) {
 
     if (JSON.parse(response).resultInserts[0] == "ok") {
         document.getElementById("subModalBody").innerHTML = "", $('#subModal').modal('hide');
-        window.location.href = "./agentList";
+        window.location.href = "./home";
         alert("Se ha guardado la información")
     } else {
         alert(JSON.parse(response).resultInserts[1])
     }
 
     utilidades.loadingEnd();
+}
+
+function loadforToUpdateCliente(e) {
+    const datoInteres = e.target.id; // ID de la fila en la base de datos
+    // const datoInteres = typeof e.target.dataset.btnTblGhfOpenModalEditarCliente === "undefined" ? e.target.closest("td").querySelector("button").dataset.btnTblGhfOpenModalEditarCliente : e.target.dataset.btnTblGhfOpenModalEditarCliente;
+    // const datoInteres = "persona-5d9vw4xu_z219jaos";
+    e.target.edit = true;
+    e.target.modal = true;
+    e.target.idForEdit = datoInteres;
+    e.partialFuncName = "loadClientView";
+    e.partialFuncOtherParam = {};
+    e.formId = "form-generic";
+    e.newFormId = "form-cliente";
+    e.modal = {
+        id: "modal",
+        titleId: "modalTitle",
+        titleTextContent: "Editar cliente",
+        bodyId: "modalBody",
+        summitBtnClass: "modalBtnSummit",
+        summitBtnId: "btn-confirmar-editarCliente",
+        summitBtnTextContent: "Quiero editar algunos datos.",
+        summitBtnDataSets: [{ idForEdit: e.target.idForEdit }],
+        cancelBtnClass: "modalBtnCancel",
+        cancelBtnId: "btn-cerrarModal",
+        cancelBtnDataSets: []
+    };
+
+    e.eazyDropDown = [
+        {
+            isInTemp: false,
+            idsArr: ["paisCliente", "departamentoCliente", "ciudadCliente"],
+            arrOtherDataKey: "datosGeograficos"
+        }
+    ];
+    e.buttonsOnTopForm = [];
+
+    e.idForEdit = e.target.idForEdit;
+    e.funcNameGetData = "getDataForEditClientViewForm"; //ESTA ES LA FUNCION DEL SERVERSIDE DESDE DONDE SE OBTIENEN LOS DATOS ejemploSelectDataDinamicInput(e)
+    e.enableInput = false;
+    e.colEspecificidades = "VgaSiNrAy7C1gYlw9JgkLw==";
+    dinamicInput.loadFormGhf(e);
+}
+
+async function editarCliente(e) {
+    // utilidades.loadingStart();
+    let promises = [];
+    const objTbl = dinamicInput.builObjToInsert("#form-cliente [data-form='cliente']");
+    objTbl.obj["rqQ29SZ4T0ZwFHTMIh+WNg=="] = e.target.dataset.idForEdit;
+    const keyToUpdate = "rqQ29SZ4T0ZwFHTMIh+WNg==";
+    const valueToUpdate = e.target.dataset.idForEdit;
+
+    objTbl.colsToUpdate = objTbl.obj;
+
+    const dataTbl = await utilidades.backEndRequest({ // Esto reemplaza 'runGoogleScript'
+        url: 'updateBdGhf',
+        params: {
+            p: objTbl,
+            keyToUpdate: keyToUpdate,
+            valueToUpdate: valueToUpdate,
+            user: sessionStorage.user
+        }
+    })
+
+    promises.push(dataTbl);
+
+    const response = await Promise.all(promises);
+
+    dinamicInput.habilitarEdicionForm({
+        idModalBody: "modalBody",
+        disabled: true,
+        idBtnSummit: "btn-confirmar-editarCliente",
+        innerHtmlBtnSummit: "Quiero editar algunos datos."
+    });
+
+    alert("Se ha editado la información")
+    // utilidades.loadingEnd();
 }
 
 ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
@@ -91,6 +172,12 @@ function clickEventHandler(e) {
     // if (e.target.matches("#crearCliente")) {
     //     loadFormIsiCrearCliente(e)
     // }
+
+    // Editar
+    if (e.target.matches('#persona-5d9vw4xu_z219jaos')) {
+        // cliente-3d70nms200_2q39j0qm8n
+        loadforToUpdateCliente(e)
+    }
 
     if (e.target.matches("#btn-confirmar-crearCliente")) {
         e.titleTextContent = "Create agent";
