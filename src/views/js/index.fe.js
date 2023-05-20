@@ -1,23 +1,25 @@
 import * as utilidades from "./utilidades.je.js";
- 
-    'use strict'
+
+'use strict'
+
+export const index = () => {
 
     window.onload = () => {
- 
+
         // En caso de que se vaya a usar el login se debe INACTIVAR la condicion No2 y ACTIVAR la condicion No1
-        
+
         // condicion No1
         if (sessionStorage.getItem("sesion") === null) {
             utilidades.loadingStart();
             window.location.href = "./login";
             sessionStorage.clear();
-           sessionStorage.setItem('loginInUse', true);
+            sessionStorage.setItem('loginInUse', true);
             utilidades.loadingEnd();
         } else {
             utilidades.loadingStart();
-            window.location.href = "./home"; 
-            sessionStorage.clear();        
-           sessionStorage.setItem('loginInUse', true);
+            window.location.href = "./home";
+            sessionStorage.clear();
+            sessionStorage.setItem('loginInUse', true);
             utilidades.loadingEnd();
         }
 
@@ -27,7 +29,5 @@ import * as utilidades from "./utilidades.je.js";
         // sessionStorage.clear();
         // sessionStorage.setItem('loginInUse', false);
         // utilidades.loadingEnd();   
-
     }
-    
-    
+}

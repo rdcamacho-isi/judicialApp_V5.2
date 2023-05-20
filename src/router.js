@@ -38,21 +38,16 @@ router.get('/login', (req, res) => {
   res.sendFile(join(__dirname, '/views/templates/login.html'))
 })
 
-
 router.get('/home', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/home.html'))
-})
-
-router.get('/createAgent', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/createAgent.html'))
+  res.sendFile(join(__dirname, '/views/templates/index.html'))
 })
 
 router.get('/crearCaso', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/caso.html'))
+  res.sendFile(join(__dirname, '/views/templates/index.html'))
 })
 
 router.get('/crearCliente', (req, res) => {
-  res.sendFile(join(__dirname, '/views/templates/cliente.html'))
+  res.sendFile(join(__dirname, '/views/templates/index.html'))
 })
 
 //POST HTTP METHODS
@@ -120,27 +115,6 @@ router.post('/closeLogin', bodyParser.json(), async (req, res) => {
   res.send(result);
 });
 
-// Ejemplo de llamado a loadPartials cuando quiero crear un CRUD
-router.post('/loadClienteView', bodyParser.json(), async (req, res) => {
-  // console.log({ paramsFromFrontEnd: req.body.data });
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = req.body.data;
-
-  const responseData = {
-    otherData: await backend.loadPartials.loadClienteForm(dataReq),
-    html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
-  }
-
-  // console.log({backendResponse: responseData});
-
-  res.send(responseData);
-});
-
 //Este POST es para  ejecutar la funcion insertar para los CRUD en la BD
 router.post('/insertBdGhf', bodyParser.json(), async (req, res) => {
   console.log({ postEnEjecucion: 'insertBdGhf' })
@@ -182,7 +156,6 @@ router.post('/updateBdGhf', bodyParser.json(), async (req, res) => {
 
   const resultInserts = await backend.dinamicInput.updateEncriptedObjInBd(dataReq.p, dataReq.keyToUpdate, dataReq.valueToUpdate, dataReq.user);
 
-
   if (resultInserts != "ok") {
     //Enviar correo indicando que hubo un error en el aplicativo
   }
@@ -191,29 +164,6 @@ router.post('/updateBdGhf', bodyParser.json(), async (req, res) => {
   } else {
     res.send(JSON.stringify({ resultInserts: resultInserts, data: backend[dataReq.otherFunc](dataReq.criteriaOtherFunc) }));
   }
-});
-
-// Ejemplo de llamado a loadPartials cuando quiero crear un CRUD
-router.post('/getDataForEditClienteViewForm', bodyParser.json(), async (req, res) => {
-  console.log({ postEnEjecucion: 'getDataForEditClienteViewForm' })
-  console.log({ paramsFromFrontEnd: req.body.data });
-  if (!req.body.data) {
-    console.log('No data found in the request body');
-    res.status(400).send('Bad Request: No data found in the request body');
-    return;
-  }
-
-  const dataReq = JSON.parse(JSON.stringify(req.body.data));
-
-  console.log({ dataReq });
-
-  const responseData = {
-    otherData: await backend.loadPartials.loadClienteData(dataReq)
-  }
-
-  console.log({ backendResponse: responseData });
-
-  res.send(responseData);
 });
 
 router.post('/loadCasoView', bodyParser.json(), async (req, res) => {
