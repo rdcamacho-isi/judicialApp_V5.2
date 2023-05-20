@@ -85,6 +85,7 @@ function loadforToUpdateCliente(e) {
     const datoInteres = e.target.id; // ID de la fila en la base de datos
     // const datoInteres = typeof e.target.dataset.btnTblGhfOpenModalEditarCliente === "undefined" ? e.target.closest("td").querySelector("button").dataset.btnTblGhfOpenModalEditarCliente : e.target.dataset.btnTblGhfOpenModalEditarCliente;
     // const datoInteres = "persona-5d9vw4xu_z219jaos";
+    document.getElementById('app').innerHTML = ''; // Remover línea
     e.target.edit = true;
     e.target.modal = true;
     e.target.idForEdit = datoInteres;
