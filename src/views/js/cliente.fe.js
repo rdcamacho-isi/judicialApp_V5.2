@@ -14,6 +14,8 @@ export const cliente = () => {
         document.querySelector('title').innerHTML = 'Crear cliente';
         document.getElementById('navbar').innerHTML = data.html;
         document.getElementById("user-name").innerHTML = sessionStorage.user;
+        document.querySelector('.btn-editar').setAttribute('id', 'persona-5d9vw4xu_z219jaos')
+        document.querySelector('.btn-editar').removeAttribute('class');
         loadFormGhfCrearCliente();
     }
 
@@ -87,7 +89,6 @@ export const cliente = () => {
     const loadforToUpdateCliente = e => {
         const datoInteres = e.target.id; // ID de la fila en la base de datos
         // const datoInteres = typeof e.target.dataset.btnTblGhfOpenModalEditarCliente === "undefined" ? e.target.closest("td").querySelector("button").dataset.btnTblGhfOpenModalEditarCliente : e.target.dataset.btnTblGhfOpenModalEditarCliente;
-        // const datoInteres = "persona-5d9vw4xu_z219jaos";
         document.getElementById('app').innerHTML = ''; // Remover línea
         e.target.edit = true;
         e.target.modal = true;
