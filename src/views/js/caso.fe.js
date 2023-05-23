@@ -75,7 +75,7 @@ export const caso = () => {
 
         if (JSON.parse(response).resultInserts[0] == "ok") {
             document.getElementById("subModalBody").innerHTML = "", $('#subModal').modal('hide');
-            // getListCasos(e);
+            window.location.href = "./home";
             alert("Se ha guardado la información")
         } else {
             alert(JSON.parse(response).resultInserts[1])
@@ -86,6 +86,7 @@ export const caso = () => {
 
     const loadforToUpdateCaso = e => {
         const datoInteres = e.target.id; // ID de la fila en la base de datos
+
         document.getElementById('app').innerHTML = ''; // Remover línea
         e.target.edit = true; // En este caso es un formulario de edición -> true
         e.target.modal = true; // Queremos que sea en un modal -> true
@@ -106,11 +107,16 @@ export const caso = () => {
             summitBtnDataSets: [{ idForEdit: e.target.idForEdit }], // Siempre se envía el mismo dataset
             cancelBtnClass: "modalBtnCancel", // 
             cancelBtnId: "btn-cerrarModal", //
-            cancelBtnTextContent: "Cancel", //
             cancelBtnDataSets: [] //
         };
 
-        e.eazyDropDown = [];
+        e.eazyDropDown = [
+            {
+                isInTemp: false, // true si o solo si el elemento está en un template
+                idsArr: ["especialidad", "subEspecialidad", "tipoProceso"], // Identifiación de los selectores 
+                arrOtherDataKey: "especialidadesCaso" // 
+            }
+        ];
         e.buttonsOnTopForm = [];
 
         e.idForEdit = e.target.idForEdit;
@@ -182,7 +188,7 @@ export const caso = () => {
             loadforToUpdateCaso(e)
         }
 
-        if (e.target.matches("#btn-EditarCaso")) {
+        if (e.target.matches("#btn-EditarCliente")) {
             editarCaso(e);
         }
 

@@ -19,15 +19,15 @@ export const cliente = () => {
         loadFormGhfCrearCliente();
     }
 
-    // Ejemplo solicitud CRUD isi cuando sin modal
     const loadFormGhfCrearCliente = () => {
-        let e = {}
+        const e = {}
         e.target = {}
         e.target.edit = false;
         e.target.modal = false;
         e.partialFuncName = "loadClientView";
         e.partialFuncOtherParam = {};
         e.formId = "form-generic";
+        
         e.newFormId = "form-cliente";
         e.noModal = {
             idContainer: "app",
@@ -37,6 +37,7 @@ export const cliente = () => {
             cancelBtnId: "",
             cancelBtnDataSets: []
         };
+
         e.eazyDropDown = [
             {
                 isInTemp: false,
@@ -47,16 +48,16 @@ export const cliente = () => {
 
         e.buttonsOnTopForm = [];
 
-        console.log({ baseForm: e })
+        // console.log({ baseForm: e })
 
         loadFormGhf(e);
     }
 
     const crearCliente = async e => {
         loadingStart();
-        let promises = [];
+        const promises = [];
 
-        let objTbl = builObjToInsert("#form-cliente [data-form='cliente']");
+        const objTbl = builObjToInsert("#form-cliente [data-form='cliente']");
 
         const idTbl = generateId("persona");
         objTbl.obj["XLPYx2KTOqh7VZC10C9NgQ=="] = sessionStorage.user;
@@ -96,6 +97,7 @@ export const cliente = () => {
         e.partialFuncName = "loadClientView";
         e.partialFuncOtherParam = {};
         e.formId = "form-generic";
+        
         e.newFormId = "form-cliente";
         e.modal = {
             id: "modal",
