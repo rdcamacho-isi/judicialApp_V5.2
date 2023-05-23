@@ -175,7 +175,38 @@ async function getEspecialidadesCasos_() {
     return r.resultAsTwoDimesionalArr;
 }
 
+async function getDataForEditCasoViewForm(criteriosFrontEnd) {
+    let objWithEncriptedCols = await sql.bdConnection('select', `SELECT
+        MAX(Tbl_0_log.idLog) AS id,
+        Tbl_0_log.obj,
+        Tbl_0_log.idUpdated
+    FROM
+        Tbl_0_log
+    WHERE
+        Tbl_0_log.idUpdated = "${criteriosFrontEnd.id}" AND Tbl_0_log.idLog =(
+        SELECT
+            MAX(Tbl_0_log.idLog) AS id
+        FROM
+            Tbl_0_log
+        WHERE
+            Tbl_0_log.idUpdated = "${criteriosFrontEnd.id}"
+    )`)
+
+    objWithEncriptedCols = objWithEncriptedCols.resultAsObj;
+
+    objWithEncriptedCols = JSON.parse(utilidades.fixJson(objWithEncriptedCols[0]["obj"])) //Esta linea es necesaria para solucionar saltos de linea y tab spaces en summer note y text area
+    objWithEncriptedCols["keysBd"] = objWithEncriptedCols.obj;
+
+    const whereCriteria = `WHERE Tbl_A_casos.idCasos = "${criteriosFrontEnd.id}"`; // Sólamente cambia esta línea
+
+    return {
+        keyAndValues: JSON.stringify(dinamicInput.selectEncriptedObjInBd(objWithEncriptedCols, whereCriteria)),
+        lastFormSaved: objWithEncriptedCols
+    }
+}
+
 export {
     getCasoViewForm_,
-    getEspecialidadesCasos_
+    getEspecialidadesCasos_,
+    getDataForEditCasoViewForm
 }

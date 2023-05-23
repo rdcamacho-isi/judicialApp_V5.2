@@ -1,7 +1,11 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="../img/logo AZA.png" alt="" class="custom-logo" />
+<nav class="navbar navbar-expand-lg navbar-light bg-light mt-4 m-xl-5">
+  <div class="container container-fluid">
+    <a class="navbar-brand" href="/home">
+      <img
+        src="../img/ISI Technology.png"
+        alt="ISI Technology logo"
+        class="custom-logo"
+      />
     </a>
     <button
       class="navbar-toggler"
@@ -16,80 +20,59 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="/loadExcelReport">Load agent report</a>
-        </li>
         <li class="nav-item dropdown">
-          <a
+          <span
             class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Agents
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="/createAgent">Create</a></li>
-            <li><a class="dropdown-item" href="/agentList">List</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            invoices
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li>
-              <a class="dropdown-item" href="/generateInvoices"
-                >Generate invoices</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" href="/moneyCollection"
-                >Money collection</a
-              >
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
             Casos
-          </a>
+          </span>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/crearCaso">Crear</a></li>
-            <li><a class="dropdown-item" href="#">Buscar</a></li>
+            <!-- <li><a class="dropdown-item" href="#">Buscar</a></li> -->
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a
+          <span
             class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
             role="button"
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
             Clientes
-          </a>
+          </span>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="/crearCliente">Crear</a></li>
-            <li><a class="dropdown-item" href="#">Buscar</a></li>
+            <!-- <li><a class="dropdown-item" href="#">Buscar</a></li> -->
           </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="container container-fluid justify-content-end">
+    <div class="btn-group">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <span
+            class="nav-link dropdown-toggle"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Hola, &nbsp;<span id="user-name"></span>
+          </span>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li class="nav-item">
+              <button id="btnCambiarClaveMenu" class="dropdown-item" type="button">Cambiar contraseña</button>
+            </li>
+            <li class="nav-item">
+              <button id="close-session" class="dropdown-item" type="button">Cerrar sesión</button>
+            </li>
+          </ul>
+          </div>
         </li>
       </ul>
     </div>
