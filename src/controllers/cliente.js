@@ -732,8 +732,24 @@ async function getDataForEditClienteViewForm(criteriosFrontEnd) {
     }
 }
 
+async function getClientList() {
+    try {
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT 
+            p.idPersonas, p.nombre, p.apellido, p.tipoPersona, t.tipoIdentificacion, p.numeroIdentificacion, p.Usuario
+        FROM Tbl_A_personas AS p
+        JOIN Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion`);
+        // console.log(objWithEncriptedCols.resultAsArrPerCol)
+        // console.log(data)
+        return objWithEncriptedCols.resultAsArrPerCol;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
 export {
     getClienteViewForm_,
     getDatosGeograficos_,
-    getDataForEditClienteViewForm
+    getDataForEditClienteViewForm,
+    getClientList,
 }
