@@ -1,5 +1,7 @@
 import { backEndRequest, loadingStart, generateId, loadingEnd } from "./utilidades.je.js";
 import { loadFormGhf, builObjToInsert, habilitarEdicionForm, confirmInsertFormGhf, loadDinamicInputs, dataFuncCriteria, numericTempGenerator } from "./Tools/isi/dinamicInput.crud.fe.js";
+import { buildTableISI } from './Tools/isi/tableISI.fe.js'
+// import { cli } from "webpack-dev-server";
 
 'use strict'
 
@@ -259,178 +261,16 @@ export const buscarClientes = () => {
         document.querySelector('title').innerHTML = 'Crear cliente';
         document.getElementById('navbar').innerHTML = data.html;
         document.getElementById("user-name").innerHTML = sessionStorage.user;
-        getListClientes();
+        getClientList();
     }
 
-    const getListClientes = async () => {
-        try {
-            const response = await fetch('/loadClientesTblGhfView', { method: 'GET' });
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la solicitud');
-            }
-            const data = await response.json();
-            console.log(data);
-
-            // Función para generar la tabla dinámica
-            const generateTable = (clients) => {
-                // Obtener el elemento contenedor donde se insertará la tabla
-                const tableContainer = document.getElementById('table-container');
-
-                // Limpiar el contenedor antes de insertar la nueva tabla
-                tableContainer.innerHTML = '';
-
-                // Crear la tabla
-                const table = document.createElement('table');
-                table.classList.add('table', 'striped');
-
-                // Crear el encabezado de la tabla
-                const thead = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-                const headers = ['Nombre', 'Tipo personas', 'Tipo identificación', 'Identificación', 'Creado por', ''];
-                headers.forEach((header) => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    headerRow.appendChild(th);
-                });
-                thead.appendChild(headerRow);
-                table.appendChild(thead);
-
-                // Crear el cuerpo de la tabla
-                const tbody = document.createElement('tbody');
-                clients.forEach((client) => {
-                    const row = document.createElement('tr');
-
-                    // Columna de Nombre (mezcla de nombre y apellido)
-                    const nameColumn = document.createElement('td');
-                    nameColumn.textContent = `${client.nombre} ${client.apellido}`;
-                    row.appendChild(nameColumn);
-
-                    // Columna de Tipo personas
-                    const typeColumn = document.createElement('td');
-                    typeColumn.textContent = client.tipoPersona;
-                    row.appendChild(typeColumn);
-
-                    // Columna de Tipo identificación
-                    const identificationTypeColumn = document.createElement('td');
-                    identificationTypeColumn.textContent = client.tipoIdentificacion;
-                    row.appendChild(identificationTypeColumn);
-
-                    // Columna de Identificación
-                    const identificationColumn = document.createElement('td');
-                    identificationColumn.textContent = client.numeroIdentificacion;
-                    row.appendChild(identificationColumn);
-
-                    // Columna de Creado por
-                    const createdByColumn = document.createElement('td');
-                    createdByColumn.textContent = client.Usuario;
-                    row.appendChild(createdByColumn);
-
-                    // Columna de botones (Editar y Eliminar)
-                    const buttonsColumn = document.createElement('td');
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Editar';
-                    editButton.classList.add('edit-button');
-                    editButton.dataset.clientId = client.idPersonas;
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = 'Eliminar';
-                    deleteButton.classList.add('delete-button');
-                    deleteButton.dataset.clientId = client.idPersonas;
-                    buttonsColumn.appendChild(editButton);
-                    buttonsColumn.appendChild(deleteButton);
-                    row.appendChild(buttonsColumn);
-
-                    tbody.appendChild(row);
-                });
-
-                table.appendChild(tbody);
-                tableContainer.appendChild(table);
-            };
-
-            // Variables de paginación
-            const recordsPerPage = 10;
-            let currentPage = 1;
-            let filteredClients = [...data];
-
-            // Generar la tabla inicial
-            generateTable(filteredClients);
-
-            // Funciones de paginación
-            const goToPage = (page) => {
-                currentPage = page;
-                generateTable(getClientsToShow());
-            };
-
-            const goToNextPage = () => {
-                if (currentPage < getTotalPages()) {
-                    currentPage++;
-                    generateTable(getClientsToShow());
-                }
-            };
-
-            const goToPreviousPage = () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    generateTable(getClientsToShow());
-                }
-            };
-
-            const getTotalPages = () => Math.ceil(filteredClients.length / recordsPerPage);
-
-            const getClientsToShow = () => {
-                const startIndex = (currentPage - 1) * recordsPerPage;
-                const endIndex = startIndex + recordsPerPage;
-                return filteredClients.slice(startIndex, endIndex);
-            };
-
-            // Agregar elementos de paginación
-            const paginationContainer = document.getElementById('pagination-container');
-            paginationContainer.innerHTML = '';
-
-            const paginationNav = document.createElement('nav');
-            const ul = document.createElement('ul');
-            const prevButton = document.createElement('button');
-            prevButton.textContent = 'Anterior';
-            prevButton.addEventListener('click', goToPreviousPage);
-            const nextButton = document.createElement('button');
-            nextButton.textContent = 'Siguiente';
-            nextButton.addEventListener('click', goToNextPage);
-            ul.appendChild(prevButton);
-
-            const totalPages = getTotalPages();
-            for (let i = 1; i <= totalPages; i++) {
-                const li = document.createElement('li');
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.addEventListener('click', () => goToPage(i));
-                li.appendChild(pageButton);
-                ul.appendChild(li);
-            }
-
-            ul.appendChild(nextButton);
-            paginationNav.appendChild(ul);
-            paginationContainer.appendChild(paginationNav);
-
-            // Función para filtrar la tabla mediante el campo de búsqueda
-            const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                filteredClients = data.filter((client) => {
-                    return (
-                        client.nombre.toLowerCase().includes(searchTerm) ||
-                        client.apellido.toLowerCase().includes(searchTerm) ||
-                        client.tipoPersona.toLowerCase().includes(searchTerm) ||
-                        client.tipoIdentificacion.toLowerCase().includes(searchTerm) ||
-                        client.numeroIdentificacion.toLowerCase().includes(searchTerm) ||
-                        client.Usuario.toLowerCase().includes(searchTerm)
-                    );
-                });
-
-                currentPage = 1;
-                generateTable(getClientsToShow());
-            });
-        } catch (error) {
-            console.error('Error:', error);
+    const getClientList = async () => {
+        const response = await fetch('/loadClientesTblGhfView', { method: 'GET' });
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la solicitud');
         }
+
+        buildTableISI(await response.json(), 'id-isi-table')
     }
 
     ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS

@@ -734,13 +734,18 @@ async function getDataForEditClienteViewForm(criteriosFrontEnd) {
 
 async function getClientList() {
     try {
-        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT 
-            p.idPersonas, p.nombre, p.apellido, p.tipoPersona, t.tipoIdentificacion, p.numeroIdentificacion, p.Usuario
-        FROM Tbl_A_personas AS p
-        JOIN Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion`);
-        // console.log(objWithEncriptedCols.resultAsArrPerCol)
-        // console.log(data)
-        return objWithEncriptedCols.resultAsArrPerCol;
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
+        CONCAT (p.idPersonas, "|", "freeText") AS "ID personas",
+        CONCAT (p.nombre, "|", "freeText") AS nombre,
+        CONCAT (p.nombre, "|", "freeButton", '|', "noClass", '|', '{"franklin": "Hola", "ruben": "adios"}') AS test,
+        CONCAT (p.nombre, "|", "freeButton", '|', "noClass", '|', '{"franklin": "Hola", "ruben": "adios"}') AS test1
+    FROM
+        Tbl_A_personas AS p
+    JOIN Tbl_D_tiposIdentificacionPesonas AS t
+    ON
+        p.tipoIdentificacion = t.idTipoIdentificacion`);
+        // console.log(objWithEncriptedCols.resultAsTwoDimesionalArr)
+        return objWithEncriptedCols;
     } catch (error) {
         console.error('Error:', error);
         throw error;
