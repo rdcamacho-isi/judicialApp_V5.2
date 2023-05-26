@@ -99,7 +99,7 @@ const clickEventHandler = (e) => {
   }
 }
 
-setInterval(() => { closeLogin("time"); }, 100000000);
+setInterval(() => { closeLogin("time"); }, 1000);
 
 window.onload = (e) => {
   const localPath = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + window.location.pathname;

@@ -1,7 +1,6 @@
 import { backEndRequest, loadingStart, generateId, loadingEnd } from "./utilidades.je.js";
 import { loadFormGhf, builObjToInsert, habilitarEdicionForm, confirmInsertFormGhf, loadDinamicInputs, dataFuncCriteria, numericTempGenerator } from "./Tools/isi/dinamicInput.crud.fe.js";
 import { buildTableISI } from './Tools/isi/tableISI.fe.js'
-// import { cli } from "webpack-dev-server";
 
 'use strict'
 
@@ -270,7 +269,34 @@ export const buscarClientes = () => {
             throw new Error('Error en la respuesta de la solicitud');
         }
 
-        buildTableISI(await response.json(), 'id-isi-table')
+        buildTableISI(await response.json(), {
+            id: 'id-isi-table',
+            name: 'Casos',
+            config: {
+                lengthMenu: [3, 5, 10, 15, 20],
+                columnDefs: [
+                    { orderable: false, targets: [2, 3] },
+                ],
+                pageLength: 10,
+                pagingType: 'full_numbers',
+                destroy: true,
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros por página",
+                    zeroRecords: "Ningún usuario encontrado",
+                    info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+                    infoEmpty: "Ningún usuario encontrado",
+                    infoFiltered: "(filtrados desde _MAX_ registros totales)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            }
+        });
     }
 
     ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS

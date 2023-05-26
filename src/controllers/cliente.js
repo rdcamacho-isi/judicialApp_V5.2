@@ -732,13 +732,16 @@ async function getDataForEditClienteViewForm(criteriosFrontEnd) {
     }
 }
 
+{/* <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+  Tooltip on top
+</button> */}
 async function getClientList() {
     try {
         const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
-        CONCAT (p.idPersonas, "|", "freeText") AS "ID personas",
+        CONCAT (p.idPersonas, "|", "freeText") AS "ID_personas",
         CONCAT (p.nombre, "|", "freeText") AS nombre,
-        CONCAT (p.nombre, "|", "freeButton", '|', "noClass", '|', '{"franklin": "Hola", "ruben": "adios"}') AS test,
-        CONCAT (p.nombre, "|", "freeButton", '|', "noClass", '|', '{"franklin": "Hola", "ruben": "adios"}') AS test1
+        CONCAT ("", "|", "freeButton", "|", "btn btn-block btn-primary fa-solid fa-pen", "|", "Editar",  "|", JSON_OBJECT('data', p.idPersonas)) AS test,
+        CONCAT ("", "|", "freeButton", "|", "btn btn-block btn-primary fa-solid fa-trash", "|", "Eliminar", "|", JSON_OBJECT('bsToggle', 'tooltip', 'bsPlacement', 'top')) AS test1
     FROM
         Tbl_A_personas AS p
     JOIN Tbl_D_tiposIdentificacionPesonas AS t
