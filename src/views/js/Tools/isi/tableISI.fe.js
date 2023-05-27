@@ -40,7 +40,6 @@ const generateTable = (result, idiISITable, nameISITable) => {
   // Crear el cuerpo de la tabla
   const tbody = document.createElement("tbody");
   clientsToShow.forEach(client => {
-    // console.log(client)
     const row = document.createElement("tr");
     Object.keys(client).forEach(key => {
       const column = document.createElement("td");

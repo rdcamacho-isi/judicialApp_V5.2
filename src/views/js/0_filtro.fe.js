@@ -1,6 +1,6 @@
 import { index } from './index.fe.js';
 import { home } from './home.fe.js';
-import { crearCaso } from './caso.fe.js';
+import { buscarCasos, crearCaso } from './caso.fe.js';
 import { buscarClientes, crearCliente } from './cliente.fe.js';
 
 'use strict'
@@ -15,6 +15,10 @@ switch (url) {
 
     case 'home':
         home();
+        break;
+
+    case 'casos':
+        buscarCasos()
         break;
 
     case 'crearCaso':

@@ -271,11 +271,11 @@ export const buscarClientes = () => {
 
         buildTableISI(await response.json(), {
             id: 'id-isi-table',
-            name: 'Casos',
+            name: 'Clientes',
             config: {
                 lengthMenu: [3, 5, 10, 15, 20],
                 columnDefs: [
-                    { orderable: false, targets: [2, 3] },
+                    { orderable: false, targets: [6, 7, 8] },
                 ],
                 pageLength: 10,
                 pagingType: 'full_numbers',

@@ -1,5 +1,6 @@
 import { backEndRequest, loadingStart, generateId, loadingEnd } from "./utilidades.je.js";
 import { loadFormGhf, builObjToInsert, habilitarEdicionForm } from "./Tools/isi/dinamicInput.crud.fe.js";
+import { buildTableISI } from './Tools/isi/tableISI.fe.js'
 
 'use strict'
 
@@ -225,104 +226,43 @@ export const buscarCasos = () => {
         document.querySelector('title').innerHTML = 'Crear cliente';
         document.getElementById('navbar').innerHTML = data.html;
         document.getElementById("user-name").innerHTML = sessionStorage.user;
-        getListCasos();
+        getClientList();
     }
 
-    const getListCasos = async () => {
-        // fetch('/loadClientesTblGhfView', { method: 'POST', })
-        //     .then(response => response.json())
-        //     .then(data => { console.log(data); })
-        //     .catch(error => { console.error('Error:', error); });
+    const getClientList = async () => {
+        const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la solicitud');
+        }
 
-        const personas = [
-            {
-                idPersona: 1,
-                nombre: "John",
-                apellido: "Doe",
-                tipoPersona: "Cliente",
-                tipoIdentificacion: "DNI",
-                numeroIdentificacion: "12345678",
-                Usuario: "admin"
-            },
-            {
-                idPersona: 2,
-                nombre: "Jane",
-                apellido: "Smith",
-                tipoPersona: "Proveedor",
-                tipoIdentificacion: "RUC",
-                numeroIdentificacion: "98765432",
-                Usuario: "admin"
-            },
-        ]
-
-        // Obtener el elemento contenedor donde se insertará la tabla
-        const contenedorTabla = document.getElementById("app");
-
-        // Crear una tabla
-        const tabla = document.createElement("table");
-        tabla.classList.add("table", "striped");
-
-        // Crear el encabezado de la tabla
-        const thead = document.createElement("thead");
-        const encabezadoFila = document.createElement("tr");
-        const encabezados = ["Nombre", "Tipo persona", "Tipo identificación", "Identificación", "Creado por", ""];
-        encabezados.forEach(encabezado => {
-            const th = document.createElement("th");
-            th.textContent = encabezado;
-            encabezadoFila.appendChild(th);
+        buildTableISI(await response.json(), {
+            id: 'id-isi-table',
+            name: 'Casos',
+            config: {
+                lengthMenu: [3, 5, 10, 15, 20],
+                columnDefs: [
+                    { orderable: false, targets: [2, 3] },
+                ],
+                pageLength: 10,
+                pagingType: 'full_numbers',
+                destroy: true,
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros por página",
+                    zeroRecords: "Ningún usuario encontrado",
+                    info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+                    infoEmpty: "Ningún usuario encontrado",
+                    infoFiltered: "(filtrados desde _MAX_ registros totales)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            }
         });
-        thead.appendChild(encabezadoFila);
-        tabla.appendChild(thead);
-
-        // Crear el cuerpo de la tabla
-        const tbody = document.createElement("tbody");
-        personas.forEach(persona => {
-            const fila = document.createElement("tr");
-
-            // Columna de Nombre (se juntan nombre y apellido)
-            const columnaNombre = document.createElement("td");
-            columnaNombre.textContent = persona.nombre + " " + persona.apellido;
-            fila.appendChild(columnaNombre);
-
-            // Columna de Tipo persona
-            const columnaTipoPersona = document.createElement("td");
-            columnaTipoPersona.textContent = persona.tipoPersona;
-            fila.appendChild(columnaTipoPersona);
-
-            // Columna de Tipo identificación
-            const columnaTipoIdentificacion = document.createElement("td");
-            columnaTipoIdentificacion.textContent = persona.tipoIdentificacion;
-            fila.appendChild(columnaTipoIdentificacion);
-
-            // Columna de Identificación
-            const columnaIdentificacion = document.createElement("td");
-            columnaIdentificacion.textContent = persona.numeroIdentificacion;
-            fila.appendChild(columnaIdentificacion);
-
-            // Columna de Creado por
-            const columnaCreadoPor = document.createElement("td");
-            columnaCreadoPor.textContent = persona.Usuario;
-            fila.appendChild(columnaCreadoPor);
-
-            // Columna de botones (Editar y Eliminar)
-            const columnaBotones = document.createElement("td");
-            const botonEditar = document.createElement("button");
-            botonEditar.textContent = "Editar";
-            botonEditar.dataset.cliente = persona.idPersona;
-            const botonEliminar = document.createElement("button");
-            botonEliminar.textContent = "Eliminar";
-            botonEliminar.dataset.cliente = persona.idPersona;
-            columnaBotones.appendChild(botonEditar);
-            columnaBotones.appendChild(botonEliminar);
-            fila.appendChild(columnaBotones);
-
-            tbody.appendChild(fila);
-        });
-
-        tabla.appendChild(tbody);
-
-        // Insertar la tabla en el contenedor
-        contenedorTabla.appendChild(tabla);
     }
 
     ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS

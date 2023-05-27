@@ -1,6 +1,24 @@
 import { validarTipoUsuario } from "./utilidades.js";
-import { getCasoViewForm_, getEspecialidadesCasos_, getDataForEditCasoViewForm } from "./caso.js";
+import { getCasoViewForm_, getEspecialidadesCasos_, getDataForEditCasoViewForm, getCasosList } from "./caso.js";
 import { getClienteViewForm_, getDatosGeograficos_, getDataForEditClienteViewForm, getClientList } from "./cliente.js";
+
+const loadCasosList = async obj => {
+    const userType = 'admin'// obj.loginInUse == "false" ? "noAplica" : await validarTipoUsuario(obj.sesion);
+    switch (userType) {
+        case "noAplica":
+            break;
+        case "admin":
+            return await getCasosList();
+        case "abogado":
+            // code block
+            break;
+        case "cliente":
+            // code block
+            break;
+        default:
+            "No puede hace nada"
+    }
+}
 
 const loadCasosForm = async obj => {
     const userType = obj.loginInUse == "false" ? "noAplica" : await validarTipoUsuario(obj.sesion);
@@ -12,7 +30,6 @@ const loadCasosForm = async obj => {
                 form: getCasoViewForm_(),
                 especialidadesCaso: await getEspecialidadesCasos_()
             }
-            break;
         case "abogado":
             // code block
             break;
@@ -31,7 +48,6 @@ const loadCasosData = async obj => {
             break;
         case "admin":
             return { form: await getDataForEditCasoViewForm(obj) }
-            break;
         case "abogado":
             // code block
             break;
@@ -50,8 +66,6 @@ const loadClientsList = async obj => {
             break;
         case "admin":
             return await getClientList();
-            // code block
-            break;
         case "abogado":
             // code block
             break;
@@ -73,7 +87,6 @@ const loadClientForm = async obj => {
                 form: await getClienteViewForm_(),
                 datosGeograficos: await getDatosGeograficos_()
             }
-            break;
         case "abogado":
             // code block
             break;
@@ -92,7 +105,6 @@ const loadClientData = async obj => {
             break;
         case "admin":
             return { form: await getDataForEditClienteViewForm(obj) }
-            break;
         case "abogado":
             // code block
             break;
@@ -105,6 +117,7 @@ const loadClientData = async obj => {
 }
 
 export {
+    loadCasosList,
     loadCasosForm,
     loadCasosData,
     loadClientsList,

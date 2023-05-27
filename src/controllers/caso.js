@@ -205,8 +205,32 @@ async function getDataForEditCasoViewForm(criteriosFrontEnd) {
     }
 }
 
+async function getCasosList() {
+    try {
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
+        CONCAT(p.idPersonas, '|freeText') AS 'ID personas',
+        CONCAT_WS(' ', p.nombre, p.apellido, '|freeText') AS 'Nombre',
+        CONCAT(p.tipoPersona, '|freeText') AS 'Tipo de persona',
+        CONCAT(t.tipoIdentificacion, '|freeText') AS 'Tipo de identificación',
+        CONCAT(p.numeroIdentificacion, '|freeText') AS 'Identificación',
+        CONCAT(p.Usuario, '|freeText') AS 'Creado por',
+        CONCAT('|freeButton|btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('data', p.idPersonas)) AS test,
+        CONCAT('|freeButton|btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('bsToggle', 'tooltip', 'bsPlacement', 'top')) AS test1
+    FROM
+        Tbl_A_personas AS p
+    JOIN
+        Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion;`);
+        // console.log(objWithEncriptedCols.resultAsObj)
+        return objWithEncriptedCols;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
 export {
     getCasoViewForm_,
     getEspecialidadesCasos_,
-    getDataForEditCasoViewForm
+    getDataForEditCasoViewForm,
+    getCasosList,
 }

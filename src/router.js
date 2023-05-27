@@ -62,6 +62,10 @@ router.get('/loadClientesTblGhfView', async (req, res) => {
   res.send(await backend.loadPartials.loadClientsList());
 });
 
+router.get('/loadCasosTblGhfView', async (req, res) => {
+  res.send(await backend.loadPartials.loadCasosList());
+});
+
 //POST HTTP METHODS
 
 router.post('/getNavBar', bodyParser.json(), async (req, res) => {
