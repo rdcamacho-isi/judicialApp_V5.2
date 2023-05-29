@@ -1,10 +1,10 @@
 import { backEndRequest, loadingStart, generateId, loadingEnd } from "./utilidades.je.js";
-import { loadFormGhf, builObjToInsert, habilitarEdicionForm } from "./Tools/isi/dinamicInput.crud.fe.js";
+import { loadFormGhf, builObjToInsert, habilitarEdicionForm, confirmInsertFormGhf } from "./Tools/isi/dinamicInput.crud.fe.js";
 import { buildTableISI } from './Tools/isi/tableISI.fe.js'
 
 'use strict'
 
-export const crearCaso = () => {
+export const createCaseView = () => {
 
     const loadNavbar = async () => {
         const data = await backEndRequest({
@@ -15,12 +15,10 @@ export const crearCaso = () => {
         document.querySelector('title').innerHTML = 'Crear caso';
         document.getElementById('navbar').innerHTML = data.html;
         document.getElementById("user-name").innerHTML = sessionStorage.user;
-        document.querySelector('.btn-editar').setAttribute('id', 'caso-8t2dm6th_gzsqc1q8')
-        document.querySelector('.btn-editar').removeAttribute('class');
-        loadFormToCreateCaso();
+        loadFormToCreateCase();
     }
 
-    const loadFormToCreateCaso = () => {
+    const loadFormToCreateCase = () => {
         const e = {};
         e.target = {};
         e.target.edit = false; // false = insert ; true = update
@@ -52,7 +50,7 @@ export const crearCaso = () => {
         loadFormGhf(e);
     }
 
-    const crearCaso = async e => {
+    const createCase = async e => {
         loadingStart();
         const promises = [];
 
@@ -85,10 +83,97 @@ export const crearCaso = () => {
         loadingEnd();
     }
 
-    const loadforToUpdateCaso = e => {
-        const datoInteres = e.target.id; // ID de la fila en la base de datos
+    ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
 
-        document.getElementById('app').innerHTML = ''; // Remover línea
+    //Esta funcion es la que maneja todos los eventos clic
+    const clickEventHandler = async e => {
+        //modals
+        if (e.target.matches(".closeModalGhf, .closeModalGhf *")) {
+            const modal = e.target.closest(".modal");
+            modal.querySelector(".modal-body").innerHTML = "";
+            $('#' + modal.id).modal('hide');
+        }
+        //modals      
+        if (e.target.matches("#btn-confirmar-crearCaso")) {
+            e.titleTextContent = "Crear caso";
+            e.subModalBody = "Esta segur@ que desea crear este registro?";
+            e.summitBtnId = "btn-crearCaso";
+            e.summitBtnTextContent = "Guardar";
+            e.summitBtnDataSets = [];
+            e.seRequiereValidacion = true;
+            e.cancelBtnId = "btn-cerrarSubModal";
+            confirmInsertFormGhf(e);
+        }
+        if (e.target.matches("#btn-crearCaso")) {
+            createCase(e);
+        }
+    }
+
+    //Esta funcion es la que maneja todos los eventos change
+    const changeEventHandler = e => { if (e.target.matches('#start-date')) showTblReports(); }
+
+    //Esta funcion es la que maneja todos los eventos input
+    const inputEventHandler = e => { }
+
+    document.querySelector('body').addEventListener("click", clickEventHandler);
+    document.querySelector('body').addEventListener("change", changeEventHandler);
+    document.querySelector('body').addEventListener("input", inputEventHandler);
+    document.addEventListener("DOMContentLoaded", loadNavbar);
+}
+
+export const casesListView = () => {
+
+    const loadNavbar = async () => {
+        let data = await backEndRequest({
+            url: 'getNavBar',
+            params: {}
+        });
+
+        document.querySelector('title').innerHTML = 'Casos';
+        document.getElementById('navbar').innerHTML = data.html;
+        document.getElementById("user-name").innerHTML = sessionStorage.user;
+        getClientList();
+    }
+
+    const getClientList = async () => {
+        const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la solicitud');
+        }
+
+        buildTableISI(await response.json(), {
+            id: 'id-isi-table',
+            name: 'Casos',
+            config: {
+                lengthMenu: [3, 5, 10, 15, 20],
+                columnDefs: [
+                    { orderable: false, targets: [8, 9] },
+                ],
+                pageLength: 10,
+                pagingType: 'full_numbers',
+                destroy: true,
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros por página",
+                    zeroRecords: "Ningún usuario encontrado",
+                    info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+                    infoEmpty: "Ningún usuario encontrado",
+                    infoFiltered: "(filtrados desde _MAX_ registros totales)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            }
+        });
+    }
+
+    const loadFormToUpdateCase = e => {
+        const datoInteres = typeof e.target.dataset.btnTblGhfOpenModalEditCase === "undefined" ? e.target.closest("td").querySelector("button").dataset.btnTblGhfOpenModalEditCase : e.target.dataset.btnTblGhfOpenModalEditCase;
+
         e.target.edit = true; // En este caso es un formulario de edición -> true
         e.target.modal = true; // Queremos que sea en un modal -> true
         e.target.idForEdit = datoInteres; // Dato para edición 
@@ -127,7 +212,7 @@ export const crearCaso = () => {
         loadFormGhf(e);
     }
 
-    const editarCaso = async e => {
+    const editCase = async e => {
         let promises = [];
         const objTbl = builObjToInsert("#form-caso [data-form='caso']");
         objTbl.obj["cInzEYaqzSf7Elfa+y6u7Q=="] = e.target.dataset.idForEdit; // 
@@ -163,111 +248,6 @@ export const crearCaso = () => {
     ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
 
     //Esta funcion es la que maneja todos los eventos clic
-    const clickEventHandler = async e => {
-        //modals
-        if (e.target.matches(".closeModalGhf, .closeModalGhf *")) {
-            const modal = e.target.closest(".modal");
-            modal.querySelector(".modal-body").innerHTML = "";
-            $('#' + modal.id).modal('hide');
-        }
-        //modals      
-        if (e.target.matches("#btn-confirmar-crearCaso")) {
-            e.titleTextContent = "Crear caso";
-            e.subModalBody = "Esta segur@ que desea crear este registro?";
-            e.summitBtnId = "btn-crearCaso";
-            e.summitBtnTextContent = "Guardar";
-            e.summitBtnDataSets = [];
-            e.seRequiereValidacion = true;
-            e.cancelBtnId = "btn-cerrarSubModal";
-            dinamicInput.confirmInsertFormGhf(e);
-        }
-        if (e.target.matches("#btn-crearCaso")) {
-            crearCaso(e);
-        }
-
-        if (e.target.matches('#caso-8t2dm6th_gzsqc1q8')) {
-            loadforToUpdateCaso(e)
-        }
-
-        if (e.target.matches("#btn-EditarCliente")) {
-            editarCaso(e);
-        }
-
-        if (e.target.matches("#btn-confirmar-editarCaso")) {
-            habilitarEdicionForm({
-                idModalBody: "modalBody",
-                disabled: false,
-                idBtnSummit: "btn-EditarCliente",
-                innerHtmlBtnSummit: "Editar."
-            })
-        }
-    }
-
-    //Esta funcion es la que maneja todos los eventos change
-    const changeEventHandler = e => { if (e.target.matches('#start-date')) showTblReports(); }
-
-    //Esta funcion es la que maneja todos los eventos input
-    const inputEventHandler = e => { }
-
-    document.querySelector('body').addEventListener("click", clickEventHandler);
-    document.querySelector('body').addEventListener("change", changeEventHandler);
-    document.querySelector('body').addEventListener("input", inputEventHandler);
-    document.addEventListener("DOMContentLoaded", loadNavbar);
-}
-
-export const buscarCasos = () => {
-
-    const loadNavbar = async () => {
-        let data = await backEndRequest({
-            url: 'getNavBar',
-            params: {}
-        });
-
-        document.querySelector('title').innerHTML = 'Crear cliente';
-        document.getElementById('navbar').innerHTML = data.html;
-        document.getElementById("user-name").innerHTML = sessionStorage.user;
-        getClientList();
-    }
-
-    const getClientList = async () => {
-        const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
-        if (!response.ok) {
-            throw new Error('Error en la respuesta de la solicitud');
-        }
-
-        buildTableISI(await response.json(), {
-            id: 'id-isi-table',
-            name: 'Casos',
-            config: {
-                lengthMenu: [3, 5, 10, 15, 20],
-                columnDefs: [
-                    { orderable: false, targets: [2, 3] },
-                ],
-                pageLength: 10,
-                pagingType: 'full_numbers',
-                destroy: true,
-                language: {
-                    lengthMenu: "Mostrar _MENU_ registros por página",
-                    zeroRecords: "Ningún usuario encontrado",
-                    info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
-                    infoEmpty: "Ningún usuario encontrado",
-                    infoFiltered: "(filtrados desde _MAX_ registros totales)",
-                    search: "Buscar:",
-                    loadingRecords: "Cargando...",
-                    paginate: {
-                        first: "Primero",
-                        last: "Último",
-                        next: "Siguiente",
-                        previous: "Anterior"
-                    }
-                }
-            }
-        });
-    }
-
-    ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
-
-    //Esta funcion es la que maneja todos los eventos clic
     const clickEventHandler = e => {
         //modals
         if (e.target.matches(".closeModalGhf, .closeModalGhf *")) {
@@ -275,43 +255,16 @@ export const buscarCasos = () => {
             modal.querySelector(".modal-body").innerHTML = "";
             $('#' + modal.id).modal('hide');
         }
-        //modals  
 
-        // if (e.target.matches("#crearCliente")) {
-        //     loadFormIsiCrearCliente(e)
-        // }
-
-        // Editar
-        if (e.target.matches('#persona-5d9vw4xu_z219jaos')) {
-            // cliente-3d70nms200_2q39j0qm8n
-            loadforToUpdateCliente(e)
-        }
-
-        if (e.target.matches("#btn-confirmar-crearCliente")) {
-            e.titleTextContent = "Create agent";
-            e.subModalBody = "Are you sure you want to create this agent?";
-            e.summitBtnId = "btn-crearCliente";
-            e.summitBtnTextContent = "Save";
-            e.summitBtnDataSets = [];
-            e.seRequiereValidacion = true;
-            e.cancelBtnId = "btn-cerrarSubModal";
-
-            confirmInsertFormGhf(e);
-        }
-
-        if (e.target.matches("#btn-crearCliente")) {
-            crearCliente(e);
-        }
-
-        if (e.target.matches("#verDatosCliente")) {
-            loadforToUpdateCliente(e)
+        if (e.target.matches('.openModalEditCase')) {
+            loadFormToUpdateCase(e)
         }
 
         if (e.target.matches("#btn-EditarCliente")) {
-            editarCliente(e);
+            editCase(e);
         }
 
-        if (e.target.matches("#btn-confirmar-editarCliente")) {
+        if (e.target.matches("#btn-confirmar-editarCaso")) {
             habilitarEdicionForm({
                 idModalBody: "modalBody",
                 disabled: false,

@@ -735,17 +735,21 @@ async function getDataForEditClienteViewForm(criteriosFrontEnd) {
 async function getClientList() {
     try {
         const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
-            CONCAT(p.idCasos, '|freeText') AS 'ID personas',
-            CONCAT(p.nombre, '|freeText') AS 'Nombre',
-            CONCAT(p.especificidades, '|freeText') AS 'Especialidad',
+            CONCAT(p.idPersonas, '|freeText') AS 'ID',
+            CONCAT_WS(' ', p.nombre, p.apellido, '|freeText') AS 'Nombre',
+            CONCAT(p.tipoPersona, '|freeText') AS 'Tipo de persona',
             CONCAT(t.tipoIdentificacion, '|freeText') AS 'Tipo de identificación',
             CONCAT(p.numeroIdentificacion, '|freeText') AS 'Identificación',
             CONCAT(p.Usuario, '|freeText') AS 'Creado por',
             CONCAT('|freeButton|openModalEditarCliente btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditarCliente', p.idPersonas)) AS 'Editar',
-            CONCAT('|freeButton|openModalContactosClienteForm btn btn-block fa-solid fa-user-group|Contactos|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditarCliente', p.idPersonas)) AS 'Contactos',
-            CONCAT('|freeButton|openModalEliminarCliente btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditarCliente', p.idPersonas)) AS 'Eliminar'
+            CONCAT('|freeButton|openModalContactosClienteForm btn btn-block fa-solid fa-user-group|Contactos|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalContactosCliente', p.idPersonas)) AS 'Contactos',
+            CONCAT('|freeButton|openModalEliminarCliente btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEliminarCliente', p.idPersonas)) AS 'Eliminar'
         FROM
-            Tbl_A_casos AS p;`);
+            Tbl_A_personas AS p
+        JOIN
+            Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion
+        WHERE 
+            p.Estado='A'`);
         // console.log(objWithEncriptedCols.resultAsObj)
         return objWithEncriptedCols;
     } catch (error) {

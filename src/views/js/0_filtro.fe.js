@@ -1,14 +1,13 @@
 import { index } from './index.fe.js';
 import { home } from './home.fe.js';
-import { buscarCasos, crearCaso } from './caso.fe.js';
-import { buscarClientes, crearCliente } from './cliente.fe.js';
+import { createCaseView, casesListView } from './caso.fe.js';
+import { createClientView, clientListView } from './client.fe.js';
 
 'use strict'
 
 const url = document.location.href.split('/')[3];
 
 switch (url) {
-
     case '':
         index();
         break;
@@ -18,19 +17,19 @@ switch (url) {
         break;
 
     case 'casos':
-        buscarCasos()
+        casesListView()
         break;
 
     case 'crearCaso':
-        crearCaso()
+        createCaseView()
         break;
 
     case 'clientes':
-        buscarClientes();
+        clientListView();
         break;
 
     case 'crearCliente':
-        crearCliente();
+        createClientView();
         break;
 
     default:

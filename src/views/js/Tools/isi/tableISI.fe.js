@@ -2,6 +2,7 @@ let dataTable;
 let dataTableIsInitialized = false;
 
 export const buildTableISI = async (result, options) => {
+
   if (dataTableIsInitialized) dataTable.destroy();
 
   generateTable(result, options.id, options.name);
@@ -30,9 +31,12 @@ const generateTable = (result, idiISITable, nameISITable) => {
   const headerRow = document.createElement("tr");
   const headers = result.colNames;
   headers.forEach(header => {
-    const th = document.createElement("th");
-    th.textContent = header;
-    headerRow.appendChild(th);
+    if (header == 'ID') {
+    } else {
+      const th = document.createElement("th");
+      th.textContent = header;
+      headerRow.appendChild(th);
+    }
   });
   thead.appendChild(headerRow);
   table.appendChild(thead);
@@ -42,31 +46,33 @@ const generateTable = (result, idiISITable, nameISITable) => {
   clientsToShow.forEach(client => {
     const row = document.createElement("tr");
     Object.keys(client).forEach(key => {
-      const column = document.createElement("td");
-      if (client[key].split('|')[1] == 'freeText') {
-        column.textContent = client[key].split('|')[0]
-      } else if (client[key].split('|')[1] == 'freeButton') {
-        const button = document.createElement("button");
-        button.textContent = client[key].split('|')[0];
-        if (client[key].split('|')[2] != 'noClass') {
-          const classes = client[key].split('|')[2].split(' ');
-          classes.forEach(clase => {
-            button.classList.add(clase);
-          })
+      if (key != 'ID') {
+        const column = document.createElement("td");
+        if (client[key].split('|')[1] == 'freeText') {
+          column.textContent = client[key].split('|')[0]
+        } else if (client[key].split('|')[1] == 'freeButton') {
+          const button = document.createElement("button");
+          button.textContent = client[key].split('|')[0];
+          if (client[key].split('|')[2] != 'noClass') {
+            const classes = client[key].split('|')[2].split(' ');
+            classes.forEach(clase => {
+              button.classList.add(clase);
+            })
+          }
+          if (client[key].split('|')[3] != 'noTooltips') {
+            button.title = client[key].split('|')[3]
+          }
+          let jsonDataset = client[key].split('|')[4]
+          if (jsonDataset != 'noJSON') {
+            jsonDataset = JSON.parse(jsonDataset)
+            Object.keys(jsonDataset).forEach(keyJson => {
+              button.dataset[keyJson] = jsonDataset[keyJson]
+            })
+          }
+          column.appendChild(button)
         }
-        if (client[key].split('|')[3] != 'noTooltips') {
-          button.title = client[key].split('|')[3]
-        }
-        let jsonDataset = client[key].split('|')[4]
-        if (jsonDataset != 'noJSON') {
-          jsonDataset = JSON.parse(jsonDataset)
-          Object.keys(jsonDataset).forEach(keyJson => {
-            button.dataset[keyJson] = jsonDataset[keyJson]
-          })
-        }
-        column.appendChild(button)
+        row.appendChild(column)
       }
-      row.appendChild(column)
     })
 
     tbody.appendChild(row);

@@ -207,19 +207,24 @@ async function getDataForEditCasoViewForm(criteriosFrontEnd) {
 
 async function getCasosList() {
     try {
-        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
-        CONCAT(p.idPersonas, '|freeText') AS 'ID personas',
-        CONCAT_WS(' ', p.nombre, p.apellido, '|freeText') AS 'Nombre',
-        CONCAT(p.tipoPersona, '|freeText') AS 'Tipo de persona',
-        CONCAT(t.tipoIdentificacion, '|freeText') AS 'Tipo de identificación',
-        CONCAT(p.numeroIdentificacion, '|freeText') AS 'Identificación',
-        CONCAT(p.Usuario, '|freeText') AS 'Creado por',
-        CONCAT('|freeButton|btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('data', p.idPersonas)) AS test,
-        CONCAT('|freeButton|btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('bsToggle', 'tooltip', 'bsPlacement', 'top')) AS test1
-    FROM
-        Tbl_A_personas AS p
-    JOIN
-        Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion;`);
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT 
+            CONCAT(casos.idCasos, '|freeText') AS ID, 
+            CONCAT(casos.nombre, '|freeText') AS Nombre,
+            CONCAT(especialidades.especialidad, '|freeText') AS Especialidad,
+            CONCAT(especialidades.subEspecialidad, '|freeText') AS "Sub-especialidad",
+            CONCAT(especialidades.tipoProceso, '|freeText') AS "Tipo de caso",
+            CONCAT('|freeText') AS "Partes del caso",
+            CONCAT('|freeText') AS "Radicados registrados",
+            CONCAT(casos.detalle, '|freeText') AS Detalles, 
+            CONCAT(casos.Usuario, '|freeText') AS "Creado por",
+            CONCAT('|freeButton|openModalEditCase btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditCase', casos.idCasos)) AS 'Editar',
+            CONCAT('|freeButton|openModalDeleteCase btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalDeleteCase', casos.idCasos)) AS 'Eliminar'
+        FROM 
+            Tbl_A_casos AS casos
+        JOIN 
+            Tbl_flujo_especialidades AS especialidades ON casos.idEspecialidades = especialidades.idEspecialidades 
+        WHERE 
+            casos.Estado='A'`);
         // console.log(objWithEncriptedCols.resultAsObj)
         return objWithEncriptedCols;
     } catch (error) {
