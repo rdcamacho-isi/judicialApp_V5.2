@@ -153,6 +153,7 @@ export const clientListView = () => {
 
         buildTableISI(await response.json(), {
             id: 'id-isi-table',
+            idContainer: 'app',
             name: 'Clientes',
             config: {
                 lengthMenu: [3, 5, 10, 15, 20],

@@ -1,19 +1,59 @@
+// Documentación para subfilas: https://datatables.net/examples/api/row_details_stateSave.html
+
 let dataTable;
 let dataTableIsInitialized = false;
+let matriz = { data: [] };
 
-export const buildTableISI = async (result, options) => {
+async function buildTableISI(result, options, withSubTable = false) {
 
   if (dataTableIsInitialized) dataTable.destroy();
+  console.log(withSubTable)
 
-  generateTable(result, options.id, options.name);
+  const columns = generateTable(result, options.idContainer, options.id, options.name, withSubTable);
+  console.log("Jaia")
+  if (withSubTable) {
+    localStorage.setItem(`matrizForTbl-${options.id}`, JSON.stringify(matriz));
 
-  dataTable = $(`#${options.id}`).DataTable(options.config);
+    dataTable = $(`#${options.id}`).DataTable({
+      "ajax": function (data, callback, settings) {
+        callback(
+          matriz
+        );
+      },
+      rowId: 'ID',
+      stateSave: true,
+      columns,
+      order: [[1, 'asc']],
+    });
+    const elInterest = document.querySelectorAll(`#${options.id} .dt-control`)
+    elInterest.forEach(el => {
+      el.addEventListener('click', function (event) {
+        if (event.target.matches('tbody td.dt-control')) {
+          var tr = event.target.closest('tr');
+          var row = dataTable.row(tr);
+
+          if (row.child.isShown()) {
+            row.child.hide();
+          } else {
+            if (typeof options.funcSubTable === 'function') {
+              row.child(options.funcSubTable(row.data())).show();
+            } else {
+              console.error(`Function ${options.funcSubTable} is not defined`);
+            }
+          }
+        }
+      })
+    })
+  } else {
+    dataTable = $(`#${options.id}`).DataTable(options.config);
+    console.log(options.id)
+  }
 
   dataTableIsInitialized = true;
 };
 
-const generateTable = (result, idiISITable, nameISITable) => {
-  const tableContainer = document.getElementById("app");
+const generateTable = (result, idContainer, idiISITable, nameISITable, withSubTable) => {
+  const tableContainer = document.getElementById(idContainer);
   const clientsToShow = result.resultAsObj
 
   // Crear una tabla
@@ -31,7 +71,7 @@ const generateTable = (result, idiISITable, nameISITable) => {
   const headerRow = document.createElement("tr");
   const headers = result.colNames;
   headers.forEach(header => {
-    if (header == 'ID') {
+    if (withSubTable && header.split('|')[1] == 'noHeader') {
     } else {
       const th = document.createElement("th");
       th.textContent = header;
@@ -42,11 +82,11 @@ const generateTable = (result, idiISITable, nameISITable) => {
   table.appendChild(thead);
 
   // Crear el cuerpo de la tabla
-  const tbody = document.createElement("tbody");
-  clientsToShow.forEach(client => {
-    const row = document.createElement("tr");
-    Object.keys(client).forEach(key => {
-      if (key != 'ID') {
+  if (!withSubTable) {
+    const tbody = document.createElement("tbody");
+    clientsToShow.forEach(client => {
+      const row = document.createElement("tr");
+      Object.keys(client).forEach(key => {
         const column = document.createElement("td");
         if (client[key].split('|')[1] == 'freeText') {
           column.textContent = client[key].split('|')[0]
@@ -72,15 +112,42 @@ const generateTable = (result, idiISITable, nameISITable) => {
           column.appendChild(button)
         }
         row.appendChild(column)
-      }
+      })
+
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+  } else {
+    const columnForRows = [{
+      className: 'dt-control',
+      orderable: false,
+      data: null,
+      defaultContent: '',
+    }]
+    clientsToShow.forEach((row, index) => {
+      // console.log(row)
+      const obj = {}
+      Object.keys(row).forEach((key, indexKey) => {
+        obj[key] = row[key].split('|')[0];
+        if (row[key].split('|')[1] == 'freeText' && index == 0) {
+          columnForRows.push({ data: key })
+        }
+      })
+      matriz.data.push(obj)
     })
 
-    tbody.appendChild(row);
-  });
+    tableContainer.innerHTML = ""; // Limpiar el contenedor antes de insertar la nueva tabla
+    tableContainer.appendChild(table);
 
-  table.appendChild(tbody);
+    console.log({ columnForRows })
+    return columnForRows;
+    // resolve(columnForRows)
+  }
 
   // Insertar la tabla en el contenedor
   tableContainer.innerHTML = ""; // Limpiar el contenedor antes de insertar la nueva tabla
   tableContainer.appendChild(table);
 };
+
+export { buildTableISI }

@@ -135,14 +135,25 @@ export const casesListView = () => {
         getClientList();
     }
 
+    function format(d) {
+        // `d` is the original data object for the row
+        return (
+            `<h1>${d.ID}</h1>`
+        );
+    }
+
     const getClientList = async () => {
         const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
         if (!response.ok) {
             throw new Error('Error en la respuesta de la solicitud');
         }
 
-        buildTableISI(await response.json(), {
+        const res = await response.json()
+
+        buildTableISI(res, {
             id: 'id-isi-table',
+            funcSubTable: format,
+            idContainer: 'app',
             name: 'Casos',
             config: {
                 lengthMenu: [3, 5, 10, 15, 20],
@@ -168,7 +179,38 @@ export const casesListView = () => {
                     }
                 }
             }
-        });
+        }, false);
+
+        // buildTableISI(res, {
+        //     id: 'id-isi-table',
+        //     funcSubTable: format,
+        //     idContainer: 'app',
+        //     name: 'Casos',
+        //     config: {
+        //         lengthMenu: [3, 5, 10, 15, 20],
+        //         columnDefs: [
+        //             { orderable: false, targets: [8, 9] },
+        //         ],
+        //         pageLength: 10,
+        //         pagingType: 'full_numbers',
+        //         destroy: true,
+        //         language: {
+        //             lengthMenu: "Mostrar _MENU_ registros por página",
+        //             zeroRecords: "Ningún usuario encontrado",
+        //             info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+        //             infoEmpty: "Ningún usuario encontrado",
+        //             infoFiltered: "(filtrados desde _MAX_ registros totales)",
+        //             search: "Buscar:",
+        //             loadingRecords: "Cargando...",
+        //             paginate: {
+        //                 first: "Primero",
+        //                 last: "Último",
+        //                 next: "Siguiente",
+        //                 previous: "Anterior"
+        //             }
+        //         }
+        //     }
+        // }, false);
     }
 
     const loadFormToUpdateCase = e => {
@@ -272,6 +314,19 @@ export const casesListView = () => {
                 innerHtmlBtnSummit: "Editar."
             })
         }
+
+        // if (e.target.matches("tbody td.dt-control")) {
+        //     var tr = $(this).closest('tr');
+        //     var row = table.row(tr);
+
+        //     if (row.child.isShown()) {
+        //         // This row is already open - close it
+        //         row.child.hide();
+        //     } else {
+        //         // Open this row
+        //         row.child(format(localStorage["matrizForTbl-id-isi-table"])).show();
+        //     }
+        // }
     }
 
     //Esta funcion es la que maneja todos los eventos change

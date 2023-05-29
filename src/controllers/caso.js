@@ -218,7 +218,8 @@ async function getCasosList() {
             CONCAT(casos.detalle, '|freeText') AS Detalles, 
             CONCAT(casos.Usuario, '|freeText') AS "Creado por",
             CONCAT('|freeButton|openModalEditCase btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditCase', casos.idCasos)) AS 'Editar',
-            CONCAT('|freeButton|openModalDeleteCase btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalDeleteCase', casos.idCasos)) AS 'Eliminar'
+            CONCAT('|freeButton|openModalDeleteCase btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalDeleteCase', casos.idCasos)) AS 'Eliminar',
+            CONCAT('Test|freeSubText') AS "Test"
         FROM 
             Tbl_A_casos AS casos
         JOIN 
