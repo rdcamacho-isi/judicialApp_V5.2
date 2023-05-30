@@ -1,9 +1,10 @@
 import { backEndRequest, loadingStart, generateId, loadingEnd } from "./utilidades.je.js";
-import { loadFormGhf, builObjToInsert, habilitarEdicionForm } from "./Tools/isi/dinamicInput.crud.fe.js";
+import { loadFormGhf, builObjToInsert, habilitarEdicionForm, confirmInsertFormGhf } from "./Tools/isi/dinamicInput.crud.fe.js";
+import { buildTableISI } from './Tools/isi/tableISI.fe.js'
 
 'use strict'
 
-export const caso = () => {
+export const createCaseView = () => {
 
     const loadNavbar = async () => {
         const data = await backEndRequest({
@@ -14,12 +15,10 @@ export const caso = () => {
         document.querySelector('title').innerHTML = 'Crear caso';
         document.getElementById('navbar').innerHTML = data.html;
         document.getElementById("user-name").innerHTML = sessionStorage.user;
-        document.querySelector('.btn-editar').setAttribute('id', 'caso-8t2dm6th_gzsqc1q8')
-        document.querySelector('.btn-editar').removeAttribute('class');
-        loadFormToCreateCaso();
+        loadFormToCreateCase();
     }
 
-    const loadFormToCreateCaso = () => {
+    const loadFormToCreateCase = () => {
         const e = {};
         e.target = {};
         e.target.edit = false; // false = insert ; true = update
@@ -51,7 +50,7 @@ export const caso = () => {
         loadFormGhf(e);
     }
 
-    const crearCaso = async e => {
+    const createCase = async e => {
         loadingStart();
         const promises = [];
 
@@ -84,10 +83,139 @@ export const caso = () => {
         loadingEnd();
     }
 
-    const loadforToUpdateCaso = e => {
-        const datoInteres = e.target.id; // ID de la fila en la base de datos
+    ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
 
-        document.getElementById('app').innerHTML = ''; // Remover línea
+    //Esta funcion es la que maneja todos los eventos clic
+    const clickEventHandler = async e => {
+        //modals
+        if (e.target.matches(".closeModalGhf, .closeModalGhf *")) {
+            const modal = e.target.closest(".modal");
+            modal.querySelector(".modal-body").innerHTML = "";
+            $('#' + modal.id).modal('hide');
+        }
+        //modals      
+        if (e.target.matches("#btn-confirmar-crearCaso")) {
+            e.titleTextContent = "Crear caso";
+            e.subModalBody = "Esta segur@ que desea crear este registro?";
+            e.summitBtnId = "btn-crearCaso";
+            e.summitBtnTextContent = "Guardar";
+            e.summitBtnDataSets = [];
+            e.seRequiereValidacion = true;
+            e.cancelBtnId = "btn-cerrarSubModal";
+            confirmInsertFormGhf(e);
+        }
+        if (e.target.matches("#btn-crearCaso")) {
+            createCase(e);
+        }
+    }
+
+    //Esta funcion es la que maneja todos los eventos change
+    const changeEventHandler = e => { if (e.target.matches('#start-date')) showTblReports(); }
+
+    //Esta funcion es la que maneja todos los eventos input
+    const inputEventHandler = e => { }
+
+    document.querySelector('body').addEventListener("click", clickEventHandler);
+    document.querySelector('body').addEventListener("change", changeEventHandler);
+    document.querySelector('body').addEventListener("input", inputEventHandler);
+    document.addEventListener("DOMContentLoaded", loadNavbar);
+}
+
+export const casesListView = () => {
+
+    const loadNavbar = async () => {
+        let data = await backEndRequest({
+            url: 'getNavBar',
+            params: {}
+        });
+
+        document.querySelector('title').innerHTML = 'Casos';
+        document.getElementById('navbar').innerHTML = data.html;
+        document.getElementById("user-name").innerHTML = sessionStorage.user;
+        getClientList();
+    }
+
+    function format(d) {
+        // `d` is the original data object for the row
+        return (
+            `<h1>${d.ID}</h1>`
+        );
+    }
+
+    const getClientList = async () => {
+        const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la solicitud');
+        }
+
+        const res = await response.json()
+
+        buildTableISI(res, {
+            id: 'id-isi-table',
+            funcSubTable: format,
+            idContainer: 'app',
+            name: 'Casos',
+            config: {
+                lengthMenu: [3, 5, 10, 15, 20],
+                columnDefs: [
+                    { orderable: false, targets: [8, 9] },
+                ],
+                pageLength: 10,
+                pagingType: 'full_numbers',
+                destroy: true,
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros por página",
+                    zeroRecords: "Ningún usuario encontrado",
+                    info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+                    infoEmpty: "Ningún usuario encontrado",
+                    infoFiltered: "(filtrados desde _MAX_ registros totales)",
+                    search: "Buscar:",
+                    loadingRecords: "Cargando...",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    }
+                }
+            }
+        }, false);
+
+        // buildTableISI(res, {
+        //     id: 'id-isi-table',
+        //     funcSubTable: format,
+        //     idContainer: 'app',
+        //     name: 'Casos',
+        //     config: {
+        //         lengthMenu: [3, 5, 10, 15, 20],
+        //         columnDefs: [
+        //             { orderable: false, targets: [8, 9] },
+        //         ],
+        //         pageLength: 10,
+        //         pagingType: 'full_numbers',
+        //         destroy: true,
+        //         language: {
+        //             lengthMenu: "Mostrar _MENU_ registros por página",
+        //             zeroRecords: "Ningún usuario encontrado",
+        //             info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
+        //             infoEmpty: "Ningún usuario encontrado",
+        //             infoFiltered: "(filtrados desde _MAX_ registros totales)",
+        //             search: "Buscar:",
+        //             loadingRecords: "Cargando...",
+        //             paginate: {
+        //                 first: "Primero",
+        //                 last: "Último",
+        //                 next: "Siguiente",
+        //                 previous: "Anterior"
+        //             }
+        //         }
+        //     }
+        // }, false);
+    }
+
+    const loadFormToUpdateCase = e => {
+        const datoInteres = typeof e.target.dataset.btnTblGhfOpenModalEditCase === "undefined" ? e.target.closest("td").querySelector("button").dataset.btnTblGhfOpenModalEditCase : e.target.dataset.btnTblGhfOpenModalEditCase;
+
         e.target.edit = true; // En este caso es un formulario de edición -> true
         e.target.modal = true; // Queremos que sea en un modal -> true
         e.target.idForEdit = datoInteres; // Dato para edición 
@@ -126,7 +254,7 @@ export const caso = () => {
         loadFormGhf(e);
     }
 
-    const editarCaso = async e => {
+    const editCase = async e => {
         let promises = [];
         const objTbl = builObjToInsert("#form-caso [data-form='caso']");
         objTbl.obj["cInzEYaqzSf7Elfa+y6u7Q=="] = e.target.dataset.idForEdit; // 
@@ -162,34 +290,20 @@ export const caso = () => {
     ////A PARTIR DE AQUÍ EMPIEZAN LOS MANEJADORES DE EVENTOS
 
     //Esta funcion es la que maneja todos los eventos clic
-    const clickEventHandler = async e => {
+    const clickEventHandler = e => {
         //modals
         if (e.target.matches(".closeModalGhf, .closeModalGhf *")) {
             const modal = e.target.closest(".modal");
             modal.querySelector(".modal-body").innerHTML = "";
             $('#' + modal.id).modal('hide');
         }
-        //modals      
-        if (e.target.matches("#btn-confirmar-crearCaso")) {
-            e.titleTextContent = "Crear caso";
-            e.subModalBody = "Esta segur@ que desea crear este registro?";
-            e.summitBtnId = "btn-crearCaso";
-            e.summitBtnTextContent = "Guardar";
-            e.summitBtnDataSets = [];
-            e.seRequiereValidacion = true;
-            e.cancelBtnId = "btn-cerrarSubModal";
-            dinamicInput.confirmInsertFormGhf(e);
-        }
-        if (e.target.matches("#btn-crearCaso")) {
-            crearCaso(e);
-        }
 
-        if (e.target.matches('#caso-8t2dm6th_gzsqc1q8')) {
-            loadforToUpdateCaso(e)
+        if (e.target.matches('.openModalEditCase')) {
+            loadFormToUpdateCase(e)
         }
 
         if (e.target.matches("#btn-EditarCliente")) {
-            editarCaso(e);
+            editCase(e);
         }
 
         if (e.target.matches("#btn-confirmar-editarCaso")) {
@@ -200,13 +314,44 @@ export const caso = () => {
                 innerHtmlBtnSummit: "Editar."
             })
         }
+
+        // if (e.target.matches("tbody td.dt-control")) {
+        //     var tr = $(this).closest('tr');
+        //     var row = table.row(tr);
+
+        //     if (row.child.isShown()) {
+        //         // This row is already open - close it
+        //         row.child.hide();
+        //     } else {
+        //         // Open this row
+        //         row.child(format(localStorage["matrizForTbl-id-isi-table"])).show();
+        //     }
+        // }
     }
 
     //Esta funcion es la que maneja todos los eventos change
-    const changeEventHandler = e => { if (e.target.matches('#start-date')) showTblReports(); }
+    const changeEventHandler = e => {
+        ///Dinamic-Input-isi: Inicio codicionales
+        if (e.target.matches(".triggerDinamicSelectGhf")) {
+            loadDinamicInputs(e, true);
+        }
+
+        if (e.target.matches(".dinamicSelectGhf")) {
+            if (e.target.dataset.funcCriteria != "no") {
+                dataFuncCriteria(e, true);
+            }
+        }
+        ///Dinamic-Input-isi: Fin codicionales
+    }
 
     //Esta funcion es la que maneja todos los eventos input
-    const inputEventHandler = e => { }
+    const inputEventHandler = e => {
+        ///Dinamic-Input-isi: Inicio codicionales para generar subformularios a partir de un input numerico
+        if (e.target.matches(".dinamicInputGhf")) {
+            numericTempGenerator(e, true);
+        }
+        ///Dinamic-Input-isi: Inicio codicionales para generar subformularios a partir de un input numerico
+    }
 
     document.querySelector('body').addEventListener("click", clickEventHandler);
     document.querySelector('body').addEventListener("change", changeEventHandler);

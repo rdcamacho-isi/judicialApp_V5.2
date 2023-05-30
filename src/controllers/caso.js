@@ -205,8 +205,38 @@ async function getDataForEditCasoViewForm(criteriosFrontEnd) {
     }
 }
 
+async function getCasosList() {
+    try {
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT 
+            CONCAT(casos.idCasos, '|freeText') AS ID, 
+            CONCAT(casos.nombre, '|freeText') AS Nombre,
+            CONCAT(especialidades.especialidad, '|freeText') AS Especialidad,
+            CONCAT(especialidades.subEspecialidad, '|freeText') AS "Sub-especialidad",
+            CONCAT(especialidades.tipoProceso, '|freeText') AS "Tipo de caso",
+            CONCAT('|freeText') AS "Partes del caso",
+            CONCAT('|freeText') AS "Radicados registrados",
+            CONCAT(casos.detalle, '|freeText') AS Detalles, 
+            CONCAT(casos.Usuario, '|freeText') AS "Creado por",
+            CONCAT('|freeButton|openModalEditCase btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditCase', casos.idCasos)) AS 'Editar',
+            CONCAT('|freeButton|openModalDeleteCase btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalDeleteCase', casos.idCasos)) AS 'Eliminar',
+            CONCAT('Test|freeSubText') AS "Test"
+        FROM 
+            Tbl_A_casos AS casos
+        JOIN 
+            Tbl_flujo_especialidades AS especialidades ON casos.idEspecialidades = especialidades.idEspecialidades 
+        WHERE 
+            casos.Estado='A'`);
+        // console.log(objWithEncriptedCols.resultAsObj)
+        return objWithEncriptedCols;
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
 export {
     getCasoViewForm_,
     getEspecialidadesCasos_,
-    getDataForEditCasoViewForm
+    getDataForEditCasoViewForm,
+    getCasosList,
 }
