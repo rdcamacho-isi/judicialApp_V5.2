@@ -262,27 +262,6 @@ router.post('/getDataForEditCasoViewForm', bodyParser.json(), async (req, res) =
   res.send(responseData);
 });
 
-// loadClientesTblGhfView
-// router.post('/loadClientesTblGhfView', bodyParser.json(), async (req, res) => {
-//   // console.log({ paramsFromFrontEnd: req.body.data });
-//   if (!req.body.data) {
-//     console.log('No data found in the request body');
-//     res.status(400).send('Bad Request: No data found in the request body');
-//     return;
-//   }
-
-//   const dataReq = req.body.data;
-
-//   const responseData = {
-//     otherData: await backend.loadPartials.loadClientsList(dataReq),
-//     html: await getHtmlContent('/views/templates/views/genericHtmlTemp.crud.html')
-//   }
-
-//   // console.log({backendResponse: responseData});
-
-//   res.send(responseData);
-// });
-
 async function axiosTest(url, data) {
   try {
     const response = await axios.post(`http://localhost:8080/${url}`, { data }, {

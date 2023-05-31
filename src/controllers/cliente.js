@@ -735,21 +735,19 @@ async function getDataForEditClienteViewForm(criteriosFrontEnd) {
 async function getClientList() {
     try {
         const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
-            CONCAT(p.idPersonas, '|freeText') AS 'ID',
-            CONCAT_WS(' ', p.nombre, p.apellido, '|freeText') AS 'Nombre',
-            CONCAT(p.tipoPersona, '|freeText') AS 'Tipo de persona',
-            CONCAT(t.tipoIdentificacion, '|freeText') AS 'Tipo de identificación',
-            CONCAT(p.numeroIdentificacion, '|freeText') AS 'Identificación',
-            CONCAT(p.Usuario, '|freeText') AS 'Creado por',
-            CONCAT('|freeButton|openModalEditarCliente btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditarCliente', p.idPersonas)) AS 'Editar',
-            CONCAT('|freeButton|openModalContactosClienteForm btn btn-block fa-solid fa-user-group|Contactos|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalContactosCliente', p.idPersonas)) AS 'Contactos',
-            CONCAT('|freeButton|openModalEliminarCliente btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEliminarCliente', p.idPersonas)) AS 'Eliminar'
+            CONCAT_WS("", Tbl_A_personas.nombre, " ", Tbl_A_personas.apellido, '|', "freeText") AS Nombre,
+            CONCAT(Tbl_A_personas.tipoPersona, '|', "freeText") AS "Tipo de persona",
+            CONCAT(Tbl_D_tiposIdentificacionPesonas.tipoIdentificacion, '|', "freeText") AS "Tipo de identificación",
+            CONCAT(Tbl_A_personas.numeroIdentificacion, '|', "freeText") AS "Identificación",
+            CONCAT(Tbl_A_personas.Usuario, '|', "freeText") AS "Creado por",
+            CONCAT('|', "freeButton", '|', "openModalEditarCliente btn btn-block fa-solid fa-pen", '|', "Editar cliente", '|', JSON_OBJECT("btnTblGhfOpenModalEditarCliente", Tbl_A_personas.idPersonas)) AS "Editar",
+            CONCAT('|', "freeButton", '|', "openModalContactosClienteForm btn btn-block fa-solid fa-users", '|', "Contactos cliente", '|', JSON_OBJECT("btnTblGhfOpenModalContactosClienteForm", Tbl_A_personas.idPersonas)) AS "Contactos",
+            CONCAT('|', "freeButton", '|', "openModalEliminarCliente btn btn-block fa-solid fa-trash", '|', "Eliminar cliente", '|', JSON_OBJECT("btnTblGhfOpenModalEliminarCliente", Tbl_A_personas.idPersonas)) AS "Eliminar"
         FROM
-            Tbl_A_personas AS p
-        JOIN
-            Tbl_D_tiposIdentificacionPesonas AS t ON p.tipoIdentificacion = t.idTipoIdentificacion
-        WHERE 
-            p.Estado='A'`);
+            Tbl_A_personas
+        LEFT JOIN Tbl_D_tiposIdentificacionPesonas ON Tbl_D_tiposIdentificacionPesonas.idTipoIdentificacion = Tbl_A_personas.tipoIdentificacion
+        WHERE
+            Tbl_A_personas.Estado = "A" AND Tbl_A_personas.cliente = "S"`);
         // console.log(objWithEncriptedCols.resultAsObj)
         return objWithEncriptedCols;
     } catch (error) {

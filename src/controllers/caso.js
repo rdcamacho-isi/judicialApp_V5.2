@@ -207,25 +207,30 @@ async function getDataForEditCasoViewForm(criteriosFrontEnd) {
 
 async function getCasosList() {
     try {
-        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT 
-            CONCAT(casos.idCasos, '|freeText') AS ID, 
-            CONCAT(casos.nombre, '|freeText') AS Nombre,
-            CONCAT(especialidades.especialidad, '|freeText') AS Especialidad,
-            CONCAT(especialidades.subEspecialidad, '|freeText') AS "Sub-especialidad",
-            CONCAT(especialidades.tipoProceso, '|freeText') AS "Tipo de caso",
-            CONCAT('|freeText') AS "Partes del caso",
-            CONCAT('|freeText') AS "Radicados registrados",
-            CONCAT(casos.detalle, '|freeText') AS Detalles, 
-            CONCAT(casos.Usuario, '|freeText') AS "Creado por",
-            CONCAT('|freeButton|openModalEditCase btn btn-block fa-solid fa-pen|Editar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalEditCase', casos.idCasos)) AS 'Editar',
-            CONCAT('|freeButton|openModalDeleteCase btn btn-block fa-solid fa-trash|Eliminar|', JSON_OBJECT('toggle', 'tooltip', 'placement', 'top', 'btnTblGhfOpenModalDeleteCase', casos.idCasos)) AS 'Eliminar',
-            CONCAT('Test|freeSubText') AS "Test"
-        FROM 
-            Tbl_A_casos AS casos
-        JOIN 
-            Tbl_flujo_especialidades AS especialidades ON casos.idEspecialidades = especialidades.idEspecialidades 
-        WHERE 
-            casos.Estado='A'`);
+        const objWithEncriptedCols = await sql.bdConnection('select', `SELECT
+            CONCAT(Tbl_A_casos.nombre, '|', "freeText") AS Nombre,
+            CONCAT(Tbl_flujo_especialidades.especialidad, '|', "freeText") AS Especialidad,
+            CONCAT(Tbl_flujo_especialidades.subEspecialidad, '|', "freeText") AS "Sub-Especialidad",
+            CONCAT(Tbl_flujo_especialidades.tipoProceso, '|', "freeText") AS "Tipo de caso",
+            CONCAT_WS(' ', GROUP_CONCAT(DISTINCT Tbl_A_personas.nombre, " (", Tbl_flujo_roles.rol, ")" SEPARATOR ', '), '|', "freeText") AS "Partes del caso",
+            CONCAT_WS(' ', GROUP_CONCAT(DISTINCT Tbl_A_radicadosCasos.radicadoExpendiente, " (", Tbl_A_radicadosCasos.nombreDespacho, ")" SEPARATOR ', '), '|', "freeText") AS "Radicados registrados",
+            CONCAT(Tbl_A_casos.detalle, '|', "freeText") AS Detalles,
+            CONCAT(Tbl_A_casos.Usuario, '|', "freeText") AS "Creado por",
+            CONCAT('|', "freeButton", '|', "casoMainView btn btn-block fa-solid fa-right-to-bracket", '|', "Gestionar caso", '|', JSON_OBJECT("btnTblGhfCasoMainView", Tbl_A_casos.idCasos)) AS "Gestionar caso",
+            CONCAT('|', "freeButton", '|', "openViewCargarActuacion btn btn-block fa-solid fa-scale-balanced", '|', "Agregar actuación", '|', JSON_OBJECT("btnTblGhfOpenViewCargarActuacion", Tbl_A_casos.idCasos)) AS "Agregar actuación",
+            CONCAT('|', "freeButton", '|', "openViewCargarActividadParalegal btn btn-block fa-solid fa-code-branch", '|', "Agregar actividad paralegal o nota", '|', JSON_OBJECT("btnTblGhfOpenViewCargarActividadParalegal", Tbl_A_casos.idCasos)) AS "Agregar actividad paralegal o nota",
+            CONCAT('|', "freeButton", '|', "openModalEliminarCaso btn btn-block fa-solid fa-trash", '|', "Eliminar caso", '|', JSON_OBJECT("btnTblGhfOpenModalEliminarCaso", Tbl_A_casos.idCasos)) AS "Eliminar caso"
+        FROM
+            Tbl_A_casos
+        LEFT JOIN Tbl_flujo_especialidades ON Tbl_flujo_especialidades.idEspecialidades = Tbl_A_casos.idEspecialidades
+        LEFT JOIN Tbl_A_gestionCasos ON Tbl_A_gestionCasos.idCasos = Tbl_A_casos.idCasos
+        LEFT JOIN Tbl_A_personas ON Tbl_A_gestionCasos.idPersonas = Tbl_A_personas.idPersonas
+        LEFT JOIN Tbl_flujo_roles ON Tbl_flujo_roles.idRoles = Tbl_A_gestionCasos.idRoles
+        LEFT JOIN Tbl_A_radicadosCasos ON Tbl_A_radicadosCasos.idCasos = Tbl_A_casos.idCasos
+        WHERE
+            Tbl_A_casos.Estado = "A"
+        GROUP BY
+            Tbl_A_casos.idCasos`);
         // console.log(objWithEncriptedCols.resultAsObj)
         return objWithEncriptedCols;
     } catch (error) {

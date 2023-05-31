@@ -135,13 +135,6 @@ export const casesListView = () => {
         getClientList();
     }
 
-    function format(d) {
-        // `d` is the original data object for the row
-        return (
-            `<h1>${d.ID}</h1>`
-        );
-    }
-
     const getClientList = async () => {
         const response = await fetch('/loadCasosTblGhfView', { method: 'GET' });
         if (!response.ok) {
@@ -152,13 +145,12 @@ export const casesListView = () => {
 
         buildTableISI(res, {
             id: 'id-isi-table',
-            funcSubTable: format,
             idContainer: 'app',
             name: 'Casos',
             config: {
                 lengthMenu: [3, 5, 10, 15, 20],
                 columnDefs: [
-                    { orderable: false, targets: [8, 9] },
+                    { orderable: false, targets: [8, 9, 10, 11] },
                 ],
                 pageLength: 10,
                 pagingType: 'full_numbers',
@@ -177,40 +169,11 @@ export const casesListView = () => {
                         next: "Siguiente",
                         previous: "Anterior"
                     }
-                }
+                },
             }
-        }, false);
+        });
 
-        // buildTableISI(res, {
-        //     id: 'id-isi-table',
-        //     funcSubTable: format,
-        //     idContainer: 'app',
-        //     name: 'Casos',
-        //     config: {
-        //         lengthMenu: [3, 5, 10, 15, 20],
-        //         columnDefs: [
-        //             { orderable: false, targets: [8, 9] },
-        //         ],
-        //         pageLength: 10,
-        //         pagingType: 'full_numbers',
-        //         destroy: true,
-        //         language: {
-        //             lengthMenu: "Mostrar _MENU_ registros por página",
-        //             zeroRecords: "Ningún usuario encontrado",
-        //             info: "Mostrando de _START_ a _END_ de un total de _TOTAL_ registros",
-        //             infoEmpty: "Ningún usuario encontrado",
-        //             infoFiltered: "(filtrados desde _MAX_ registros totales)",
-        //             search: "Buscar:",
-        //             loadingRecords: "Cargando...",
-        //             paginate: {
-        //                 first: "Primero",
-        //                 last: "Último",
-        //                 next: "Siguiente",
-        //                 previous: "Anterior"
-        //             }
-        //         }
-        //     }
-        // }, false);
+        document.getElementById('id-isi-table').style = 'font-size: 0.7em;'
     }
 
     const loadFormToUpdateCase = e => {

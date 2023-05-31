@@ -180,6 +180,8 @@ export const clientListView = () => {
                 }
             }
         });
+
+        document.getElementById('id-isi-table').style = 'font-size: 0.8em;'
     }
 
     const loadFormToUpdateCliente = e => {

@@ -7,10 +7,9 @@ let matriz = { data: [] };
 async function buildTableISI(result, options, withSubTable = false) {
 
   if (dataTableIsInitialized) dataTable.destroy();
-  console.log(withSubTable)
 
   const columns = generateTable(result, options.idContainer, options.id, options.name, withSubTable);
-  console.log("Jaia")
+
   if (withSubTable) {
     localStorage.setItem(`matrizForTbl-${options.id}`, JSON.stringify(matriz));
 
@@ -46,7 +45,6 @@ async function buildTableISI(result, options, withSubTable = false) {
     })
   } else {
     dataTable = $(`#${options.id}`).DataTable(options.config);
-    console.log(options.id)
   }
 
   dataTableIsInitialized = true;
@@ -94,7 +92,7 @@ const generateTable = (result, idContainer, idiISITable, nameISITable, withSubTa
           const button = document.createElement("button");
           button.textContent = client[key].split('|')[0];
           if (client[key].split('|')[2] != 'noClass') {
-            const classes = client[key].split('|')[2].split(' ');
+            const classes = client[key].split('|')[2].split(" ");
             classes.forEach(clase => {
               button.classList.add(clase);
             })
